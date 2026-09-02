@@ -1,0 +1,133 @@
+.dialoguer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 6vw 4.5vh;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.58) 0%,
+    rgba(0, 0, 0, 0.18) 38%,
+    rgba(0, 0, 0, 0.04) 70%,
+    transparent 100%
+  );
+  pointer-events: auto;
+  user-select: none;
+}
+
+.dialoguer-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(920px, 86vw);
+  gap: 0.6rem;
+}
+
+.dialoguer-portrait-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  min-height: 28vh;
+  pointer-events: none;
+}
+
+.dialoguer-portrait {
+  max-height: 46vh;
+  max-width: 42vw;
+  object-fit: contain;
+  object-position: center bottom;
+  filter: drop-shadow(0 10px 28px rgba(0, 0, 0, 0.85));
+  image-rendering: auto;
+}
+
+.dialoguer-portrait.is-pixel {
+  image-rendering: pixelated;
+}
+
+.dialoguer-box {
+  position: relative;
+  width: 100%;
+  min-height: 7.5rem;
+  padding: 1.15rem 1.4rem 1.35rem;
+  background: #000;
+  color: #fff;
+  border: 4px solid #fff;
+  box-shadow:
+    0 0 0 4px #000,
+    0 0 0 8px #fff;
+  font-family: "Lucida Console", "Courier New", ui-monospace, monospace;
+  font-size: clamp(18px, 1.7vw, 26px);
+  line-height: 1.45;
+  letter-spacing: 0.4px;
+}
+
+.dialoguer-name {
+  position: absolute;
+  top: -1.55rem;
+  left: 0.35rem;
+  padding: 0 0.45rem;
+  background: #000;
+  color: #fff;
+  font-size: 0.72em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.dialoguer-text {
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 3.2em;
+}
+
+.dialoguer-advance {
+  position: absolute;
+  right: 1rem;
+  bottom: 0.55rem;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 12px solid #fff;
+  opacity: 0;
+}
+
+.dialoguer-advance.is-ready {
+  opacity: 1;
+  animation: dialoguer-blink 0.7s steps(2, end) infinite;
+}
+
+@keyframes dialoguer-blink {
+  50% { opacity: 0; }
+}
+
+.dialoguer-config .form-group textarea {
+  min-height: 10rem;
+  font-family: ui-monospace, "Courier New", monospace;
+  resize: vertical;
+}
+
+.dialoguer-config .dialoguer-row {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.dialoguer-config .dialoguer-row input[type="text"] {
+  flex: 1;
+}
+
+.dialoguer-config .dialoguer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-top: 0.75rem;
+}
+
+.dialoguer-hud-btn i {
+  color: #f4e6c3;
+}

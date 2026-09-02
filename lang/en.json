@@ -1,0 +1,88 @@
+{
+  "DIALOGUER": {
+    "Title": "Dialoguer",
+    "ConfigTitle": "Dialogue",
+    "RegionBehavior": "Play Dialogue",
+    "Enabled": "Play dialogue when a token enters this tile",
+    "Speaker": "Speaker",
+    "SpeakerHint": "Drop a token or actor, paste a UUID, or leave blank to use the nearest token.",
+    "UseSelected": "Use selected token",
+    "Portrait": "Portrait override",
+    "PortraitHint": "Leave blank to use the speaker's token art.",
+    "Browse": "Browse",
+    "Script": "Dialogue",
+    "ScriptHint": "One box of text. A blank line starts the next box.",
+    "Audience": "Who sees it",
+    "AudienceTriggering": "Triggering player",
+    "AudienceGmAndTriggering": "GM and triggering player",
+    "AudienceScene": "Everyone viewing this scene",
+    "AudienceAll": "Everyone connected",
+    "Once": "Once per token",
+    "Hop": "Hop the speaker token while text types",
+    "PlayerTokensOnly": "Only player-owned tokens can trigger",
+    "TypingMs": "Typing speed (ms per character)",
+    "TypingMsHint": "Blank uses the world default. 0 is instant.",
+    "ResetHistory": "Clear once-per-token history",
+    "Test": "Test (GM only)",
+    "Save": "Save",
+    "HistoryCleared": "Dialogue history cleared.",
+    "Saved": "Dialogue saved.",
+    "NoSpeaker": "Dialoguer: no speaker token found.",
+    "NoLines": "Dialoguer: no dialogue text.",
+    "HUD": {
+      "Speak": "Speak",
+      "Configure": "Configure dialogue"
+    },
+    "TileHUD": {
+      "Configure": "Configure dialogue"
+    },
+    "KeyAdvance": "Advance dialogue",
+    "KeyClose": "Close dialogue",
+    "Settings": {
+      "TypingMs": "Default typing speed (ms)",
+      "TypingMsHint": "Milliseconds between characters. 0 is instant.",
+      "HopHeight": "Hop height (pixels)",
+      "Blip": "Typing blip",
+      "BlipHint": "Short beep on each character, Undertale-style.",
+      "BlipVolume": "Blip volume",
+      "GmAlwaysSees": "GM always sees dialogue",
+      "GmAlwaysSeesHint": "Active GMs receive every overlay even if audience is set to triggering player only."
+    },
+    "MATT": {
+      "Group": "Dialoguer",
+      "Play": "Play Dialogue",
+      "PlayContent": "Play Dialoguer overlay"
+    },
+    "BEHAVIOR": {
+      "FIELDS": {
+        "speakerUuid": {
+          "label": "Speaker UUID",
+          "hint": "Token or Actor UUID. Blank uses the nearest token."
+        },
+        "portrait": {
+          "label": "Portrait override"
+        },
+        "script": {
+          "label": "Dialogue",
+          "hint": "One box of text. A blank line starts the next box."
+        },
+        "audience": {
+          "label": "Who sees it"
+        },
+        "once": {
+          "label": "Once per token"
+        },
+        "hop": {
+          "label": "Hop speaker token"
+        },
+        "playerTokensOnly": {
+          "label": "Player tokens only"
+        },
+        "typingMs": {
+          "label": "Typing speed (ms)",
+          "hint": "Blank uses the world default. 0 is instant."
+        }
+      }
+    }
+  }
+}

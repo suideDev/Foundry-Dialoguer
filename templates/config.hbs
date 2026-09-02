@@ -1,0 +1,70 @@
+<div class="flexcol">
+  {{#if showEnabled}}
+  <div class="form-group">
+    <label>{{localize "DIALOGUER.Enabled"}}</label>
+    <input type="checkbox" name="enabled" {{checked config.enabled}} />
+  </div>
+  {{/if}}
+
+  {{#if showSpeaker}}
+  <div class="form-group">
+    <label>{{localize "DIALOGUER.Speaker"}}</label>
+    <div class="dialoguer-row" data-drop="speaker">
+      <input type="text" name="speakerUuid" value="{{config.speakerUuid}}" placeholder="Scene.xxx.Token.yyy" />
+      <button type="button" data-action="useSelected">{{localize "DIALOGUER.UseSelected"}}</button>
+    </div>
+    <p class="hint">{{localize "DIALOGUER.SpeakerHint"}}</p>
+  </div>
+  {{/if}}
+
+  <div class="form-group">
+    <label>{{localize "DIALOGUER.Portrait"}}</label>
+    <div class="dialoguer-row">
+      <input type="text" name="portrait" value="{{config.portrait}}" />
+      <button type="button" data-action="pickPortrait">{{localize "DIALOGUER.Browse"}}</button>
+    </div>
+    <p class="hint">{{localize "DIALOGUER.PortraitHint"}}</p>
+  </div>
+
+  <div class="form-group">
+    <label>{{localize "DIALOGUER.Script"}}</label>
+    <textarea name="script" rows="8">{{config.script}}</textarea>
+    <p class="hint">{{localize "DIALOGUER.ScriptHint"}}</p>
+  </div>
+
+  <div class="form-group">
+    <label>{{localize "DIALOGUER.Audience"}}</label>
+    <select name="audience">
+      {{selectOptions audiences selected=config.audience localize=true}}
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>{{localize "DIALOGUER.Once"}}</label>
+    <input type="checkbox" name="once" {{checked config.once}} />
+  </div>
+
+  <div class="form-group">
+    <label>{{localize "DIALOGUER.Hop"}}</label>
+    <input type="checkbox" name="hop" {{checked config.hop}} />
+  </div>
+
+  {{#if showPlayerTokensOnly}}
+  <div class="form-group">
+    <label>{{localize "DIALOGUER.PlayerTokensOnly"}}</label>
+    <input type="checkbox" name="playerTokensOnly" {{checked config.playerTokensOnly}} />
+  </div>
+  {{/if}}
+
+  <div class="form-group">
+    <label>{{localize "DIALOGUER.TypingMs"}}</label>
+    <input type="number" name="typingMs" value="{{config.typingMs}}" min="0" max="200" step="1" />
+    <p class="hint">{{localize "DIALOGUER.TypingMsHint"}}</p>
+  </div>
+
+  <div class="dialoguer-actions">
+    <button type="button" data-action="resetHistory">{{localize "DIALOGUER.ResetHistory"}}</button>
+    <button type="button" data-action="test">{{localize "DIALOGUER.Test"}}</button>
+    <button type="submit"><i class="fa-solid fa-save"></i> {{localize "DIALOGUER.Save"}}</button>
+  </div>
+</div>
