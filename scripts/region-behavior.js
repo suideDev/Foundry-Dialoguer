@@ -78,6 +78,14 @@ export class DialogueRegionBehaviorType extends RegionBehaviorType {
         min: 40,
         max: 600,
         initial: null
+      }),
+      hopDurationMs: new fields.NumberField({
+        required: false,
+        nullable: true,
+        integer: true,
+        min: 0,
+        max: 20000,
+        initial: null
       })
     };
   }
@@ -107,7 +115,8 @@ export class DialogueRegionBehaviorType extends RegionBehaviorType {
         theme: this.theme,
         display: this.display,
         ambientSize: this.ambientSize,
-        hopMs: this.hopMs
+        hopMs: this.hopMs,
+        hopDurationMs: this.hopDurationMs
       },
       triggeringToken: token,
       scene: this.scene

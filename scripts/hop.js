@@ -20,11 +20,16 @@ export function startHop(tokenId, options = {}) {
 
   const height = Number(game.settings.get(MODULE_ID, "hopHeight")) || 16;
   const period = Math.max(40, Number(options.periodMs) || Number(game.settings.get(MODULE_ID, "hopMs")) || 160);
+  const duration = Number(options.durationMs);
   const started = performance.now();
 
   const tick = () => {
     const current = canvas.tokens?.get(tokenId);
     if (!current?.mesh || current.mesh.destroyed) {
+      stopHop(tokenId);
+      return;
+    }
+    if (duration > 0 && performance.now() - started >= duration) {
       stopHop(tokenId);
       return;
     }

@@ -59,7 +59,10 @@ class AmbientBark {
     window.addEventListener("keydown", this._onKey, true);
     canvas.app?.ticker?.add(this._tick, null, (globalThis.PIXI?.UPDATE_PRIORITY?.LOW ?? -25) - 1);
     if (this.payload.hop !== false && this.payload.speakerTokenId) {
-      startHop(this.payload.speakerTokenId, { periodMs: this.payload.hopMs });
+      startHop(this.payload.speakerTokenId, {
+        periodMs: this.payload.hopMs,
+        durationMs: this.payload.hopDurationMs
+      });
     }
     this.#tick();
     for (const line of this.lines) {

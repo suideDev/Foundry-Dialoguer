@@ -25,7 +25,8 @@ export const DEFAULT_CONFIG = {
   theme: "classic",
   display: "box",
   ambientSize: null,
-  hopMs: null
+  hopMs: null,
+  hopDurationMs: null
 };
 
 export const DISPLAY = {

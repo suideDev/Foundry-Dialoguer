@@ -94,7 +94,8 @@ export class DialogueConfigApp extends HandlebarsApplicationMixin(ApplicationV2)
       theme: data.theme || "classic",
       display: data.display || "box",
       ambientSize: optionalNumber(data.ambientSize),
-      hopMs: optionalNumber(data.hopMs)
+      hopMs: optionalNumber(data.hopMs),
+      hopDurationMs: optionalNumber(data.hopDurationMs)
     }, { inplace: false });
     if (!app.isTile) {
       config.enabled = true;
@@ -180,7 +181,8 @@ export class DialogueConfigApp extends HandlebarsApplicationMixin(ApplicationV2)
       theme: data.theme || "classic",
       display: data.display || "box",
       ambientSize: optionalNumber(data.ambientSize),
-      hopMs: optionalNumber(data.hopMs)
+      hopMs: optionalNumber(data.hopMs),
+      hopDurationMs: optionalNumber(data.hopDurationMs)
     };
   }
 
