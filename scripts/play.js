@@ -239,7 +239,7 @@ export async function play({
   };
 
   broadcastPlay(audienceIds, payload);
-  void whisperToChat(payload, audienceIds, speakerDoc);
+  if (payload.display !== "ambient") void whisperToChat(payload, audienceIds, speakerDoc);
   if (merged.once && source && triggeringToken && isAuthority()) {
     void markFired(source, triggeringToken.id);
   }
