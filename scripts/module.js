@@ -1,7 +1,5 @@
 import { MODULE_ID } from "./constants.js";
-import { registerSocket, play, playFromDocument, playFromToken, clearFired } from "./play.js";
-import { closeAmbient } from "./ambient.js";
-import { stopAllHops } from "./hop.js";
+import { registerSocket, play, playFromDocument, playFromToken, clearFired, stopAll } from "./play.js";
 import { openDialogueConfig } from "./config-app.js";
 import { enhanceRegionBehaviorSheet, registerRegionBehavior } from "./region-behavior.js";
 import { registerTileTriggers } from "./tile-trigger.js";
@@ -27,10 +25,7 @@ Hooks.once("ready", () => {
     clearFired
   };
 
-  Hooks.on("canvasTearDown", () => {
-    closeAmbient(true);
-    stopAllHops();
-  });
+  Hooks.on("canvasTearDown", () => stopAll());
   Hooks.on("renderRegionBehaviorConfig", (app, html) => enhanceRegionBehaviorSheet(app, html));
 });
 

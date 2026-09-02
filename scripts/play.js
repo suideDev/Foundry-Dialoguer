@@ -16,6 +16,7 @@ import { showAmbient, getActiveAmbient, closeAmbient } from "./ambient.js";
 import { stopAllHops } from "./hop.js";
 
 const queue = [];
+const onceLocks = new Set();
 let playing = false;
 
 export function registerSocket() {
@@ -65,9 +66,13 @@ async function receivePlay(payload) {
       await showOverlay(wrapped);
     }
   } catch (err) {
-    playing = false;
     console.error(`${MODULE_ID} | overlay failed`, err);
+    finish();
   }
+}
+
+export function stopAll() {
+  stopLocal();
 }
 
 function ownersOf(tokenDoc) {
@@ -204,7 +209,8 @@ function hopDuration(config) {
 
 function slideAmount(config) {
   if (Number.isFinite(config.slidePx) && config.slidePx >= 0) return Number(config.slidePx);
-  return Number(game.settings.get(MODULE_ID, "slidePx")) || 8;
+  const world = Number(game.settings.get(MODULE_ID, "slidePx"));
+  return Number.isFinite(world) && world >= 0 ? world : 8;
 }
 
 function slidePeriod(config) {
@@ -225,52 +231,58 @@ export async function play({
   if (merged.playerTokensOnly && triggeringToken && !isPlayerOwnedToken(triggeringToken)) {
     return false;
   }
-  if (merged.once && source && triggeringToken && hasFired(source, triggeringToken.id)) return false;
+  const onceKey = merged.once && source && triggeringToken ? `${source.uuid}:${triggeringToken.id}` : null;
+  if (onceKey) {
+    if (hasFired(source, triggeringToken.id) || onceLocks.has(onceKey)) return false;
+    onceLocks.add(onceKey);
+  }
 
-  const speakerDoc = speaker ?? await resolveSpeaker({
-    speakerUuid: merged.speakerUuid,
-    triggeringToken,
-    scene
-  });
-  if (!lines && !parseLines(merged.script).length && speakerDoc?.actor) {
-    const actorCfg = getConfig(speakerDoc.actor);
-    if (actorCfg.script) merged.script = actorCfg.script;
-    if (!merged.portrait && actorCfg.portrait) merged.portrait = actorCfg.portrait;
-    if (!Number.isFinite(merged.blipPitch) && Number.isFinite(actorCfg.blipPitch)) {
-      merged.blipPitch = actorCfg.blipPitch;
+  try {
+    const speakerDoc = speaker ?? await resolveSpeaker({
+      speakerUuid: merged.speakerUuid,
+      triggeringToken,
+      scene
+    });
+    if (!lines && !parseLines(merged.script).length && speakerDoc?.actor) {
+      const actorCfg = getConfig(speakerDoc.actor);
+      if (actorCfg.script) merged.script = actorCfg.script;
+      if (!merged.portrait && actorCfg.portrait) merged.portrait = actorCfg.portrait;
+      if (!Number.isFinite(merged.blipPitch) && Number.isFinite(actorCfg.blipPitch)) {
+        merged.blipPitch = actorCfg.blipPitch;
+      }
     }
-  }
-  const parsed = lines ?? parseLines(merged.script).map((text) => ({ text, portrait: merged.portrait }));
-  if (!parsed.length) {
-    if (game.user.isGM) ui.notifications.warn(game.i18n.localize("DIALOGUER.NoLines"));
-    return false;
-  }
+    const parsed = lines ?? parseLines(merged.script).map((text) => ({ text, portrait: merged.portrait }));
+    if (!parsed.length) {
+      if (game.user.isGM) ui.notifications.warn(game.i18n.localize("DIALOGUER.NoLines"));
+      return false;
+    }
 
-  const audienceIds = userIds ?? resolveAudience(merged.audience, { triggeringToken, scene });
-  const payload = {
-    speakerTokenId: speakerDoc?.id ?? null,
-    speakerName: speakerDoc?.name ?? speakerDoc?.actor?.name ?? "",
-    portrait: portraitFor(speakerDoc, merged.portrait),
-    lines: parsed,
-    hop: merged.hop !== false,
-    slide: merged.slide === true,
-    typingMs: typingSpeed(merged),
-    blipPitch: blipPitch(merged),
-    theme: resolveTheme(merged.theme),
-    display: merged.display === "ambient" ? "ambient" : "box",
-    ambientSize: ambientSize(merged),
-    hopMs: hopPeriod(merged),
-    hopDurationMs: hopDuration(merged),
-    slidePx: slideAmount(merged),
-    slideMs: slidePeriod(merged)
-  };
+    const audienceIds = userIds ?? resolveAudience(merged.audience, { triggeringToken, scene });
+    const payload = {
+      speakerTokenId: speakerDoc?.id ?? null,
+      speakerName: speakerDoc?.name ?? speakerDoc?.actor?.name ?? "",
+      portrait: portraitFor(speakerDoc, merged.portrait),
+      lines: parsed,
+      hop: merged.hop !== false,
+      slide: merged.slide === true,
+      typingMs: typingSpeed(merged),
+      blipPitch: blipPitch(merged),
+      theme: resolveTheme(merged.theme),
+      display: merged.display === "ambient" ? "ambient" : "box",
+      ambientSize: ambientSize(merged),
+      hopMs: hopPeriod(merged),
+      hopDurationMs: hopDuration(merged),
+      slidePx: slideAmount(merged),
+      slideMs: slidePeriod(merged)
+    };
 
-  broadcastPlay(audienceIds, payload);
-  if (payload.display !== "ambient") void whisperToChat(payload, audienceIds, speakerDoc);
-  if (merged.once && source && triggeringToken && isAuthority()) {
-    void markFired(source, triggeringToken.id);
+    broadcastPlay(audienceIds, payload);
+    if (payload.display !== "ambient") void whisperToChat(payload, audienceIds, speakerDoc);
+    if (onceKey && isAuthority()) await markFired(source, triggeringToken.id);
+    return true;
+  } finally {
+    if (onceKey) onceLocks.delete(onceKey);
   }
-  return true;
 }
 
 function escapeHTML(text) {

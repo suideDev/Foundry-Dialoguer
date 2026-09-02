@@ -2,6 +2,16 @@ import { MODULE_ID } from "./constants.js";
 
 const hops = new Map();
 
+function finiteNumber(value, fallback) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function positiveNumber(value, fallback) {
+  const n = Number(value);
+  return Number.isFinite(n) && n > 0 ? n : fallback;
+}
+
 function tickerPriority() {
   return globalThis.PIXI?.UPDATE_PRIORITY?.LOW ?? -25;
 }
@@ -23,12 +33,12 @@ export function startHop(tokenId, options = {}) {
   const slideOn = options.slide === true;
   if (!hopOn && !slideOn) return;
 
-  const height = hopOn ? Number(game.settings.get(MODULE_ID, "hopHeight")) || 16 : 0;
-  const period = Math.max(40, Number(options.periodMs) || Number(game.settings.get(MODULE_ID, "hopMs")) || 160);
+  const height = hopOn ? positiveNumber(game.settings.get(MODULE_ID, "hopHeight"), 16) : 0;
+  const period = Math.max(40, positiveNumber(options.periodMs, positiveNumber(game.settings.get(MODULE_ID, "hopMs"), 160)));
   const slide = slideOn
-    ? Math.max(0, Number(options.slidePx) || Number(game.settings.get(MODULE_ID, "slidePx")) || 8)
+    ? Math.max(0, finiteNumber(options.slidePx, finiteNumber(game.settings.get(MODULE_ID, "slidePx"), 8)))
     : 0;
-  const slidePeriod = Math.max(40, Number(options.slideMs) || Number(game.settings.get(MODULE_ID, "slideMs")) || 320);
+  const slidePeriod = Math.max(40, positiveNumber(options.slideMs, positiveNumber(game.settings.get(MODULE_ID, "slideMs"), 320)));
   const duration = Number(options.durationMs);
   const started = performance.now();
 

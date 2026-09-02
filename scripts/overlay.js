@@ -56,7 +56,10 @@ export class DialogueOverlay {
   }
 
   async start() {
-    if (!this.lines.length) return;
+    if (!this.lines.length) {
+      this.payload.onClose?.();
+      return;
+    }
     this.#mount();
     window.addEventListener("keydown", this._onKey, true);
     this.root.addEventListener("click", this._onClick);

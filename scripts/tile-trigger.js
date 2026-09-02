@@ -115,7 +115,6 @@ function addPoint(points, seen, tokenDoc, raw) {
 function completedPoints(tokenDoc, movement) {
   const points = [];
   const seen = new Set();
-  addPoint(points, seen, tokenDoc, movement?.origin);
   for (const waypoint of movement?.passed?.waypoints ?? []) addPoint(points, seen, tokenDoc, waypoint);
   if (!(movement?.pending?.waypoints ?? []).length) {
     addPoint(points, seen, tokenDoc, movement?.destination);
