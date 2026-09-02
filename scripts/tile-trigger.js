@@ -1,15 +1,15 @@
-import { getConfig, isAuthority, isPlayerOwnedToken, pointInTile, tokenCenter } from "./constants.js";
+import { SOCKET_EVENT, getConfig, isAuthority, isPlayerOwnedToken, tokenOverlapsTile } from "./constants.js";
 import { playFromDocument } from "./play.js";
 
 const recent = new Map();
 
 export function registerTileTriggers() {
-  Hooks.on("moveToken", (doc, movement) => {
-    if (!isAuthority()) return;
+  Hooks.on("moveToken", (doc, movement, _operation, user) => {
     const origin = movement?.origin;
     const destination = movement?.destination;
     if (!origin || !destination) return;
-    void considerTileEntry(doc, origin, destination);
+    const userId = typeof user === "string" ? user : user?.id;
+    handleMovement(doc, origin, destination, userId);
   });
 
   const priorPositions = new WeakMap();
@@ -20,7 +20,6 @@ export function registerTileTriggers() {
 
   Hooks.on("updateToken", (doc, changes) => {
     if (!("x" in changes || "y" in changes)) return;
-    if (!isAuthority()) return;
     const prior = priorPositions.get(doc);
     priorPositions.delete(doc);
     if (!prior) return;
@@ -30,25 +29,55 @@ export function registerTileTriggers() {
       width: doc.width,
       height: doc.height
     };
-    void considerTileEntry(doc, prior, destination);
+    handleMovement(doc, prior, destination, game.user.id);
+  });
+
+  game.socket.on(SOCKET_EVENT, (message) => {
+    if (message?.action !== "tileEnter") return;
+    if (!isAuthority()) return;
+    const scene = game.scenes.get(message.sceneId);
+    const token = scene?.tokens.get(message.tokenId);
+    if (!token) return;
+    void considerTileEntry(token, message.origin, message.destination, message.userId);
   });
 }
 
-async function considerTileEntry(tokenDoc, origin, destination) {
+function handleMovement(doc, origin, destination, userId) {
+  if (isAuthority()) {
+    void considerTileEntry(doc, origin, destination, userId);
+    return;
+  }
+  if (userId !== game.user.id) return;
+  game.socket.emit(SOCKET_EVENT, {
+    action: "tileEnter",
+    sceneId: doc.parent?.id,
+    tokenId: doc.id,
+    origin,
+    destination,
+    userId
+  });
+}
+
+function canTrigger(tokenDoc, config, userId) {
+  if (!config.playerTokensOnly) return true;
+  if (isPlayerOwnedToken(tokenDoc)) return true;
+  const mover = game.users.get(userId);
+  return Boolean(mover && !mover.isGM);
+}
+
+async function considerTileEntry(tokenDoc, origin, destination, userId) {
   const scene = tokenDoc.parent;
   if (!scene) return;
-  const now = tokenCenter(tokenDoc, destination);
-  const was = tokenCenter(tokenDoc, origin);
 
   const tiles = scene.tiles.filter((tile) => getConfig(tile).enabled);
 
   for (const tile of tiles) {
-    const insideNow = pointInTile(now, tile);
-    const insideWas = pointInTile(was, tile);
+    const insideNow = tokenOverlapsTile(tokenDoc, destination, tile);
+    const insideWas = tokenOverlapsTile(tokenDoc, origin, tile);
     if (!insideNow || insideWas) continue;
     const config = getConfig(tile);
-    if (config.playerTokensOnly && !isPlayerOwnedToken(tokenDoc)) continue;
-    const key = `${tokenDoc.id}:${tile.id}:${Math.round(now.x)}:${Math.round(now.y)}`;
+    if (!canTrigger(tokenDoc, config, userId)) continue;
+    const key = `${tokenDoc.id}:${tile.id}`;
     const last = recent.get(key) ?? 0;
     if (Date.now() - last < 500) continue;
     recent.set(key, Date.now());

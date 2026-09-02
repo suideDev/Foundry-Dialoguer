@@ -45,7 +45,7 @@ function registerSettings() {
     scope: "world",
     config: true,
     type: Number,
-    default: 12
+    default: 16
   });
 
   game.settings.register(MODULE_ID, "blip", {

@@ -108,6 +108,23 @@
   50% { opacity: 0; }
 }
 
+#dialoguer-config {
+  max-height: 90vh;
+}
+
+#dialoguer-config .window-content {
+  overflow-y: auto;
+  max-height: calc(90vh - 2.75rem);
+}
+
+#dialoguer-config .form-footer {
+  position: sticky;
+  bottom: 0;
+  padding-top: 0.6rem;
+  background: var(--color-cool-5, #292929);
+  z-index: 2;
+}
+
 .dialoguer-config textarea[name="script"] {
   width: 100%;
   min-height: 10rem;

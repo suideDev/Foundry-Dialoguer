@@ -2,39 +2,46 @@ import { MODULE_ID } from "./constants.js";
 
 const hops = new Map();
 
-function hopTarget(token) {
-  return token?.mesh ?? token;
+function tickerPriority() {
+  return globalThis.PIXI?.UPDATE_PRIORITY?.LOW ?? -25;
+}
+
+function applyOffset(token, offset) {
+  if (typeof token._refreshPosition === "function") token._refreshPosition();
+  const mesh = token.mesh;
+  if (!mesh) return;
+  mesh.position.y -= offset;
 }
 
 export function startHop(tokenId) {
   stopHop(tokenId);
   const token = canvas.tokens?.get(tokenId);
-  const mesh = hopTarget(token);
-  if (!mesh) return;
+  if (!token) return;
 
-  const height = Number(game.settings.get(MODULE_ID, "hopHeight")) || 12;
-  const originY = mesh.y;
+  const height = Number(game.settings.get(MODULE_ID, "hopHeight")) || 16;
   const started = performance.now();
 
   const tick = () => {
-    if (!mesh.parent || mesh.destroyed) {
+    const current = canvas.tokens?.get(tokenId);
+    if (!current?.mesh || current.mesh.destroyed) {
       stopHop(tokenId);
       return;
     }
-    const t = (performance.now() - started) / 160;
-    mesh.y = originY - Math.abs(Math.sin(t * Math.PI)) * height;
+    const bounce = Math.abs(Math.sin(((performance.now() - started) / 160) * Math.PI)) * height;
+    applyOffset(current, bounce);
   };
 
-  canvas.app.ticker.add(tick);
-  hops.set(tokenId, { mesh, originY, tick });
+  canvas.app.ticker.add(tick, null, tickerPriority());
+  hops.set(tokenId, { tick });
 }
 
 export function stopHop(tokenId) {
   const hop = hops.get(tokenId);
   if (!hop) return;
   canvas.app?.ticker?.remove(hop.tick);
-  if (hop.mesh && !hop.mesh.destroyed) hop.mesh.y = hop.originY;
   hops.delete(tokenId);
+  const token = canvas.tokens?.get(tokenId);
+  if (token && typeof token._refreshPosition === "function") token._refreshPosition();
 }
 
 export function stopAllHops() {

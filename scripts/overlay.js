@@ -153,7 +153,6 @@ export class DialogueOverlay {
 
     this.typing = false;
     this.skip = false;
-    if (this.payload.hop && this.payload.speakerTokenId) stopHop(this.payload.speakerTokenId);
     if (!this.closed) this.advanceEl.classList.add("is-ready");
   }
 

@@ -74,10 +74,15 @@ export function isAuthority() {
   return gm ? gm.id === game.user.id : game.user.isGM;
 }
 
-export function pointInTile(point, tileDoc) {
+export function tokenOverlapsTile(tokenDoc, point, tileDoc) {
+  const size = tokenDoc.parent?.grid?.size ?? 100;
+  const width = (point?.width ?? tokenDoc.width) * size;
+  const height = (point?.height ?? tokenDoc.height) * size;
+  const x = point?.x ?? tokenDoc.x;
+  const y = point?.y ?? tokenDoc.y;
   const x1 = tileDoc.x;
   const y1 = tileDoc.y;
   const x2 = x1 + Math.abs(tileDoc.width);
   const y2 = y1 + Math.abs(tileDoc.height);
-  return point.x >= x1 && point.x <= x2 && point.y >= y1 && point.y <= y2;
+  return x < x2 && x + width > x1 && y < y2 && y + height > y1;
 }

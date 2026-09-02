@@ -13,7 +13,7 @@ export class DialogueConfigApp extends HandlebarsApplicationMixin(ApplicationV2)
       icon: "fa-solid fa-comment-dots",
       resizable: true
     },
-    position: { width: 580, height: "auto" },
+    position: { width: 560, height: 640 },
     form: {
       handler: DialogueConfigApp.#onSubmit,
       closeOnSubmit: true
@@ -55,6 +55,13 @@ export class DialogueConfigApp extends HandlebarsApplicationMixin(ApplicationV2)
       showPlayerTokensOnly: this.isTile,
       audiences: audienceChoices()
     };
+  }
+
+  async _onFirstRender(context, options) {
+    await super._onFirstRender?.(context, options);
+    const maxH = Math.max(420, Math.floor(window.innerHeight * 0.85));
+    const height = Math.min(this.position.height || 640, maxH);
+    this.setPosition({ height });
   }
 
   async _onRender(context, options) {
@@ -119,8 +126,16 @@ export class DialogueConfigApp extends HandlebarsApplicationMixin(ApplicationV2)
     config.once = false;
     config.playerTokensOnly = false;
     const selected = canvas.tokens?.controlled[0]?.document ?? null;
+    let speaker = null;
+    if (config.speakerUuid) {
+      try {
+        speaker = await fromUuid(config.speakerUuid);
+      } catch {
+        speaker = null;
+      }
+    }
     if (this.isActor) {
-      const speaker = canvas.tokens?.placeables.find((token) => token.actor?.id === this.document.id)?.document
+      speaker = canvas.tokens?.placeables.find((token) => token.actor?.id === this.document.id)?.document
         ?? selected;
       await play({
         source: this.document,
@@ -134,6 +149,7 @@ export class DialogueConfigApp extends HandlebarsApplicationMixin(ApplicationV2)
     await play({
       source: this.document,
       config,
+      speaker: speaker?.documentName === "Token" ? speaker : null,
       triggeringToken: selected,
       scene: canvas.scene
     });
