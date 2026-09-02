@@ -2,15 +2,13 @@
 
 Undertale-style dialogue for Foundry VTT v13/v14. A player walks onto a tile or region. Their client gets a portrait and a typed text box. The NPC token hops while the line is appearing.
 
-This is not Theatre Inserts. There is no stage, no chat macros, and the overlay is sent to the triggering player instead of everyone.
+The overlay is sent to the triggering player instead of everyone.
 
 ## Install
 
 The Foundry module id is `dialoguer`. The install folder must be named `dialoguer`.
 
-### The Forge (use this)
-
-After the `v0.1.0` GitHub release exists:
+### The Forge
 
 1. Open your Foundry setup on The Forge.
 2. **Add-on Modules** → **Install Module**.
@@ -22,7 +20,7 @@ https://github.com/suideDev/Foundry-Dialoguer/releases/latest/download/module.js
 
 4. Enable **Dialoguer** in the world.
 
-Do not install by cloning this GitHub repo as `Foundry-Dialoguer`. Foundry will ignore a folder whose name does not match `dialoguer`. If the repo is private, make it public or add a Forge deploy key, otherwise the Manifest URL cannot be fetched.
+Do not install by cloning this GitHub repo as `Foundry-Dialoguer`. Foundry will ignore a folder whose name does not match `dialoguer`.
 
 ### Local Foundry
 
@@ -32,9 +30,7 @@ mklink /D "%LOCALAPPDATA%\FoundryVTT\Data\modules\dialoguer" "G:\GithubStuff\Fou
 
 Adjust the Foundry Data path if yours is not the default.
 
-No extra modules are required. Monk's Active Tile Triggers is optional.
-
-## Hallway setup (the thing you actually want)
+## Setup
 
 One pad, one NPC, one player.
 
@@ -46,9 +42,9 @@ One pad, one NPC, one player.
 6. Write the dialogue. A blank line starts the next box:
 
 ```
-The flock is arranged as specified.
+Hello.
 
-If it isn't, that's not us. That's the other shift.
+Stay determined.
 ```
 
 7. Set **Who sees it** to **GM and triggering player**.
@@ -57,9 +53,9 @@ If it isn't, that's not us. That's the other shift.
 
 Walk a player-owned token onto the tile. Space, Enter, Z, X, or click advances. Escape closes.
 
-Repeat per hallway. Each player only sees the overlay if they are the one who stepped on that pad.
+Each player only sees the overlay if they are the one who stepped on that pad.
 
-## Regions (no extra tile)
+## Regions
 
 1. Draw a Scene Region over the pad.
 2. Add behavior **Play Dialogue**.
@@ -67,22 +63,12 @@ Repeat per hallway. Each player only sees the overlay if they are the one who st
 
 ## Actor dialogue
 
-Right-click an NPC token. The HUD has two Dialoguer buttons:
+Click an NPC token. The HUD has two Dialoguer buttons:
 
 - **Speak** plays that actor's stored lines immediately.
 - **Configure dialogue** edits the actor.
 
 If a tile or region has a speaker but an empty script, Dialoguer uses the speaker actor's stored lines. Write common chatter on the actor. Write pad-specific lines on the tile.
-
-## Monk's Active Tiles
-
-If you already think in MATT:
-
-1. Configure the tile with Dialoguer as above, but leave **Play dialogue when a token enters this tile** unchecked so it does not fire twice.
-2. Add a MATT trigger (Token Enters, etc.).
-3. Add action **Dialoguer → Play Dialogue**.
-
-MATT's once-per-token and player filters still apply. Dialoguer's own once-per-token also applies if you left it on.
 
 ## Macro / API
 
@@ -90,7 +76,7 @@ MATT's once-per-token and player filters still apply. Dialoguer's own once-per-t
 game.dialoguer.play({
   speaker: canvas.tokens.controlled[0].document,
   config: {
-    script: "You walk on the fire.\n\nThat's allowed.",
+    script: "Hello.\n\nStay determined.",
     hop: true,
     audience: "gmAndTriggering"
   },
@@ -110,16 +96,16 @@ game.dialoguer.clearFired(tileDocument);
 |---|---|
 | Triggering player | Token owners only (usually the one player) |
 | GM and triggering player | Default. You see what they see. |
-| Everyone viewing this scene | Shared hallways |
+| Everyone viewing this scene | Everyone looking at this map |
 | Everyone connected | Broadcast |
 
-World setting **GM always sees dialogue** adds you even when audience is triggering player only.
+World setting **GM always sees dialogue** adds you even when audience is set to triggering player only.
 
 ## Controls
 
 - Click / Space / Enter / Z / X: skip typing, then next box, then close
 - Escape: close
-- Shift is not required; clicking while it types dumps the rest of the line
+- Clicking while it types dumps the rest of the line
 
 Hop is visual only. It does not move the token document.
 
