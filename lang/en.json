@@ -23,6 +23,8 @@
     "PlayerTokensOnlyHint": "Uncheck this to test by dragging any token as GM. If a player exists in the world, the token must be assigned to them.",
     "TypingMs": "Typing speed (ms per character)",
     "TypingMsHint": "Blank uses the world default. 0 is instant.",
+    "BlipPitch": "Talking pitch",
+    "BlipPitchHint": "How high or low this speaker's beep sounds. Blank uses the client default. Lower is deeper.",
     "ResetHistory": "Clear once-per-token history",
     "Test": "Test (GM only)",
     "Save": "Save",
@@ -47,8 +49,8 @@
       "Blip": "Typing blip",
       "BlipHint": "Short beep on each character, Undertale-style.",
       "BlipVolume": "Blip volume",
-      "BlipPitch": "Blip pitch",
-      "BlipPitchHint": "How high or low the typing beep sounds. Lower is deeper.",
+      "BlipPitch": "Default blip pitch",
+      "BlipPitchHint": "Used when a tile or speaker leaves pitch blank. Lower is deeper.",
       "GmAlwaysSees": "GM always sees dialogue",
       "GmAlwaysSeesHint": "Active GMs receive every overlay even if audience is set to triggering player only.",
       "WhisperChat": "Whisper dialogue to chat",
@@ -87,6 +89,10 @@
         "typingMs": {
           "label": "Typing speed (ms)",
           "hint": "Blank uses the world default. 0 is instant."
+        },
+        "blipPitch": {
+          "label": "Talking pitch",
+          "hint": "How high or low this speaker's beep sounds. Blank uses the client default. Lower is deeper."
         }
       }
     }

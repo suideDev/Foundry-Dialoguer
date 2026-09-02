@@ -168,6 +168,11 @@ function typingSpeed(config) {
   return Number(game.settings.get(MODULE_ID, "typingMs"));
 }
 
+function blipPitch(config) {
+  if (Number.isFinite(config.blipPitch) && config.blipPitch > 0) return Number(config.blipPitch);
+  return Number(game.settings.get(MODULE_ID, "blipPitch")) || 980;
+}
+
 export async function play({
   source = null,
   config = {},
@@ -192,6 +197,9 @@ export async function play({
     const actorCfg = getConfig(speakerDoc.actor);
     if (actorCfg.script) merged.script = actorCfg.script;
     if (!merged.portrait && actorCfg.portrait) merged.portrait = actorCfg.portrait;
+    if (!Number.isFinite(merged.blipPitch) && Number.isFinite(actorCfg.blipPitch)) {
+      merged.blipPitch = actorCfg.blipPitch;
+    }
   }
   const parsed = lines ?? parseLines(merged.script).map((text) => ({ text, portrait: merged.portrait }));
   if (!parsed.length) {
@@ -206,7 +214,8 @@ export async function play({
     portrait: portraitFor(speakerDoc, merged.portrait),
     lines: parsed,
     hop: merged.hop !== false,
-    typingMs: typingSpeed(merged)
+    typingMs: typingSpeed(merged),
+    blipPitch: blipPitch(merged)
   };
 
   broadcastPlay(audienceIds, payload);
@@ -268,7 +277,8 @@ export async function playFromDocument(doc, { triggeringToken = null, extra = {}
       once: doc.system.once,
       hop: doc.system.hop,
       playerTokensOnly: doc.system.playerTokensOnly,
-      typingMs: doc.system.typingMs
+      typingMs: doc.system.typingMs,
+      blipPitch: doc.system.blipPitch
     };
   } else {
     config = getConfig(doc);

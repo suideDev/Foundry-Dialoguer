@@ -7,7 +7,7 @@ function sleep(ms) {
   return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
-function blip() {
+function blip(hz) {
   if (!game.settings.get(MODULE_ID, "blip")) return;
   try {
     const ctx = game.audio?.context;
@@ -15,7 +15,9 @@ function blip() {
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     const volume = Number(game.settings.get(MODULE_ID, "blipVolume")) || 0.04;
-    const pitch = Number(game.settings.get(MODULE_ID, "blipPitch")) || 980;
+    const pitch = Number.isFinite(hz) && hz > 0
+      ? Number(hz)
+      : Number(game.settings.get(MODULE_ID, "blipPitch")) || 980;
     const jitter = Math.min(220, pitch * 0.18);
     osc.type = "square";
     osc.frequency.value = Math.max(80, pitch - jitter / 2 + Math.random() * jitter);
@@ -148,7 +150,7 @@ export class DialogueOverlay {
         const ch = this.full[i];
         this.shown += ch;
         this.textEl.textContent = this.shown;
-        if (ch.trim()) blip();
+        if (ch.trim()) blip(this.payload.blipPitch);
         await sleep(speed);
       }
     }

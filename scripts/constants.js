@@ -20,7 +20,8 @@ export const DEFAULT_CONFIG = {
   once: true,
   hop: true,
   playerTokensOnly: true,
-  typingMs: null
+  typingMs: null,
+  blipPitch: null
 };
 
 export function audienceChoices() {

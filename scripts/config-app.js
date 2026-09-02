@@ -74,10 +74,6 @@ export class DialogueConfigApp extends HandlebarsApplicationMixin(ApplicationV2)
   static async #onSubmit(_event, _form, formData) {
     const app = this;
     const data = formData.object;
-    const typingRaw = data.typingMs;
-    const typingMs = typingRaw === "" || typingRaw === undefined || typingRaw === null
-      ? null
-      : Number(typingRaw);
     const config = foundry.utils.mergeObject(foundry.utils.deepClone(DEFAULT_CONFIG), {
       enabled: Boolean(data.enabled),
       speakerUuid: data.speakerUuid ?? "",
@@ -87,7 +83,8 @@ export class DialogueConfigApp extends HandlebarsApplicationMixin(ApplicationV2)
       once: Boolean(data.once),
       hop: Boolean(data.hop),
       playerTokensOnly: Boolean(data.playerTokensOnly),
-      typingMs: Number.isFinite(typingMs) ? typingMs : null
+      typingMs: optionalNumber(data.typingMs),
+      blipPitch: optionalNumber(data.blipPitch)
     }, { inplace: false });
     if (!app.isTile) {
       config.enabled = true;
@@ -159,10 +156,6 @@ export class DialogueConfigApp extends HandlebarsApplicationMixin(ApplicationV2)
     const form = app.element;
     const Ctor = foundry.applications?.ux?.FormDataExtended ?? globalThis.FormDataExtended;
     const data = Ctor ? new Ctor(form).object : Object.fromEntries(new FormData(form).entries());
-    const typingRaw = data.typingMs;
-    const typingMs = typingRaw === "" || typingRaw === undefined || typingRaw === null
-      ? null
-      : Number(typingRaw);
     return {
       enabled: Boolean(data.enabled),
       speakerUuid: data.speakerUuid ?? "",
@@ -172,7 +165,8 @@ export class DialogueConfigApp extends HandlebarsApplicationMixin(ApplicationV2)
       once: Boolean(data.once),
       hop: Boolean(data.hop),
       playerTokensOnly: Boolean(data.playerTokensOnly),
-      typingMs: Number.isFinite(typingMs) ? typingMs : null
+      typingMs: optionalNumber(data.typingMs),
+      blipPitch: optionalNumber(data.blipPitch)
     };
   }
 
@@ -196,4 +190,10 @@ export class DialogueConfigApp extends HandlebarsApplicationMixin(ApplicationV2)
 export function openDialogueConfig(document) {
   if (!document) return;
   new DialogueConfigApp(document).render({ force: true });
+}
+
+function optionalNumber(raw) {
+  if (raw === "" || raw === undefined || raw === null) return null;
+  const n = Number(raw);
+  return Number.isFinite(n) ? n : null;
 }

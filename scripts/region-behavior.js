@@ -41,6 +41,14 @@ export class DialogueRegionBehaviorType extends RegionBehaviorType {
         min: 0,
         max: 200,
         initial: null
+      }),
+      blipPitch: new fields.NumberField({
+        required: false,
+        nullable: true,
+        integer: true,
+        min: 200,
+        max: 2000,
+        initial: null
       })
     };
   }
@@ -65,7 +73,8 @@ export class DialogueRegionBehaviorType extends RegionBehaviorType {
         once: this.once,
         hop: this.hop,
         playerTokensOnly: this.playerTokensOnly,
-        typingMs: this.typingMs
+        typingMs: this.typingMs,
+        blipPitch: this.blipPitch
       },
       triggeringToken: token,
       scene: this.scene
