@@ -47,6 +47,16 @@ Hello.
 Stay determined.
 ```
 
+Use `[page]` to split a long dialogue box into multiple pages without changing the portrait:
+
+```
+This is the first page of dialogue.
+[page]
+After clicking, this second page appears in the same box.
+[page]
+And finally, the third page.
+```
+
 7. Set **Who sees it** to **GM and triggering player**.
 8. Leave **Once per token** and **Hop** on.
 9. Save. Click **Test** while you have the NPC (or the player token) selected.

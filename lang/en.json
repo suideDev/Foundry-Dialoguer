@@ -11,7 +11,7 @@
     "PortraitHint": "Leave blank to use the speaker's token art.",
     "Browse": "Browse",
     "Script": "Dialogue",
-    "ScriptHint": "One box of text. A blank line starts the next box.",
+    "ScriptHint": "One box of text. A blank line starts the next box. Use [page] to split a box into pages.",
     "Audience": "Who sees it",
     "AudienceTriggering": "Triggering player",
     "AudienceGmAndTriggering": "GM and triggering player",
@@ -111,7 +111,7 @@
         },
         "script": {
           "label": "Dialogue",
-          "hint": "One box of text. A blank line starts the next box."
+          "hint": "One box of text. A blank line starts the next box. Use [page] to split a box into pages."
         },
         "audience": {
           "label": "Who sees it"
