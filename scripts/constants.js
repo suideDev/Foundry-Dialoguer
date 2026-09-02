@@ -31,7 +31,11 @@ export const THEMES = {
   arcane: "DIALOGUER.ThemeArcane",
   stone: "DIALOGUER.ThemeStone",
   whisper: "DIALOGUER.ThemeWhisper",
-  terminal: "DIALOGUER.ThemeTerminal"
+  terminal: "DIALOGUER.ThemeTerminal",
+  starweave: "DIALOGUER.ThemeStarweave",
+  brimstone: "DIALOGUER.ThemeBrimstone",
+  umbral: "DIALOGUER.ThemeUmbral",
+  fen: "DIALOGUER.ThemeFen"
 };
 
 export function audienceChoices() {
