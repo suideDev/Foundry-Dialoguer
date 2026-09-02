@@ -29,6 +29,12 @@
     "ThemeBrimstone": "Brimstone",
     "ThemeUmbral": "Umbral",
     "ThemeFen": "Fen",
+    "Display": "How it appears",
+    "DisplayHint": "Dialogue box is the full portrait UI. Ambient floats over the speaker and fades on its own.",
+    "DisplayBox": "Dialogue box",
+    "DisplayAmbient": "Ambient (over token)",
+    "AmbientSize": "Ambient text size",
+    "AmbientSizeHint": "How large the floating text is. Blank uses the world default.",
     "Once": "Once per token",
     "Hop": "Hop the speaker token while text types",
     "PlayerTokensOnly": "Only player-owned tokens can trigger",
@@ -60,6 +66,8 @@
       "TypingMs": "Default typing speed (ms)",
       "TypingMsHint": "Milliseconds between characters. 0 is instant.",
       "HopHeight": "Hop height (pixels)",
+      "AmbientSize": "Default ambient text size",
+      "AmbientSizeHint": "Used when a tile leaves ambient size blank.",
       "Blip": "Typing blip",
       "BlipHint": "Short beep on each character, Undertale-style.",
       "BlipVolume": "Blip volume",
@@ -111,6 +119,14 @@
         "theme": {
           "label": "Text box",
           "hint": "Look of the dialogue box."
+        },
+        "display": {
+          "label": "How it appears",
+          "hint": "Dialogue box is the full portrait UI. Ambient floats over the speaker and fades on its own."
+        },
+        "ambientSize": {
+          "label": "Ambient text size",
+          "hint": "How large the floating text is. Blank uses the world default."
         }
       }
     }

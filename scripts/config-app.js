@@ -1,4 +1,4 @@
-import { AUDIENCE, DEFAULT_CONFIG, MODULE_ID, audienceChoices, getConfig, setConfig, themeChoices } from "./constants.js";
+import { AUDIENCE, DEFAULT_CONFIG, MODULE_ID, audienceChoices, getConfig, setConfig, themeChoices, displayChoices } from "./constants.js";
 import { clearFired, play } from "./play.js";
 import { previewBlip } from "./overlay.js";
 
@@ -57,6 +57,7 @@ export class DialogueConfigApp extends HandlebarsApplicationMixin(ApplicationV2)
       showPlayerTokensOnly: this.isTile,
       audiences: audienceChoices(),
       themes: themeChoices(),
+      displays: displayChoices(),
       blipPitchSlider: Number.isFinite(pitch) && pitch > 0 ? pitch : 980
     };
   }
@@ -90,7 +91,9 @@ export class DialogueConfigApp extends HandlebarsApplicationMixin(ApplicationV2)
       playerTokensOnly: Boolean(data.playerTokensOnly),
       typingMs: optionalNumber(data.typingMs),
       blipPitch: optionalNumber(data.blipPitch),
-      theme: data.theme || "classic"
+      theme: data.theme || "classic",
+      display: data.display || "box",
+      ambientSize: optionalNumber(data.ambientSize)
     }, { inplace: false });
     if (!app.isTile) {
       config.enabled = true;
@@ -173,7 +176,9 @@ export class DialogueConfigApp extends HandlebarsApplicationMixin(ApplicationV2)
       playerTokensOnly: Boolean(data.playerTokensOnly),
       typingMs: optionalNumber(data.typingMs),
       blipPitch: optionalNumber(data.blipPitch),
-      theme: data.theme || "classic"
+      theme: data.theme || "classic",
+      display: data.display || "box",
+      ambientSize: optionalNumber(data.ambientSize)
     };
   }
 

@@ -22,8 +22,22 @@ export const DEFAULT_CONFIG = {
   playerTokensOnly: true,
   typingMs: null,
   blipPitch: null,
-  theme: "classic"
+  theme: "classic",
+  display: "box",
+  ambientSize: null
 };
+
+export const DISPLAY = {
+  box: "box",
+  ambient: "ambient"
+};
+
+export function displayChoices() {
+  return {
+    [DISPLAY.box]: "DIALOGUER.DisplayBox",
+    [DISPLAY.ambient]: "DIALOGUER.DisplayAmbient"
+  };
+}
 
 export const THEMES = {
   classic: "DIALOGUER.ThemeClassic",

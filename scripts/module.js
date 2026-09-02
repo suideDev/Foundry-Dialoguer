@@ -1,5 +1,6 @@
 import { MODULE_ID } from "./constants.js";
 import { registerSocket, play, playFromDocument, playFromToken, clearFired } from "./play.js";
+import { closeAmbient } from "./ambient.js";
 import { stopAllHops } from "./hop.js";
 import { openDialogueConfig } from "./config-app.js";
 import { enhanceRegionBehaviorSheet, registerRegionBehavior } from "./region-behavior.js";
@@ -26,7 +27,10 @@ Hooks.once("ready", () => {
     clearFired
   };
 
-  Hooks.on("canvasTearDown", () => stopAllHops());
+  Hooks.on("canvasTearDown", () => {
+    closeAmbient(true);
+    stopAllHops();
+  });
   Hooks.on("renderRegionBehaviorConfig", (app, html) => enhanceRegionBehaviorSheet(app, html));
 });
 
@@ -46,6 +50,16 @@ function registerSettings() {
     config: true,
     type: Number,
     default: 16
+  });
+
+  game.settings.register(MODULE_ID, "ambientSize", {
+    name: "DIALOGUER.Settings.AmbientSize",
+    hint: "DIALOGUER.Settings.AmbientSizeHint",
+    scope: "world",
+    config: true,
+    type: Number,
+    range: { min: 12, max: 72, step: 1 },
+    default: 28
   });
 
   game.settings.register(MODULE_ID, "blip", {

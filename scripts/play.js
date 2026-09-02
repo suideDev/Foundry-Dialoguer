@@ -12,6 +12,7 @@ import {
   resolveTheme
 } from "./constants.js";
 import { showOverlay, getActiveOverlay } from "./overlay.js";
+import { showAmbient, getActiveAmbient, closeAmbient } from "./ambient.js";
 import { stopAllHops } from "./hop.js";
 
 const queue = [];
@@ -33,7 +34,12 @@ function stopLocal() {
   if (overlay) {
     overlay.payload.onClose = null;
     overlay.close();
-  } else {
+  }
+  const bark = getActiveAmbient();
+  if (bark) {
+    bark.payload.onClose = null;
+    closeAmbient(true);
+  } else if (!overlay) {
     stopAllHops();
   }
 }
@@ -44,15 +50,20 @@ async function receivePlay(payload) {
     return;
   }
   playing = true;
+  const finish = () => {
+    playing = false;
+    const next = queue.shift();
+    if (next) void receivePlay(next);
+  };
   try {
-    await showOverlay({
-      ...payload,
-      onClose: () => {
-        playing = false;
-        const next = queue.shift();
-        if (next) void receivePlay(next);
-      }
-    });
+    const wrapped = { ...payload, onClose: finish };
+    const token = canvas.tokens?.get(payload.speakerTokenId);
+    if (payload.display === "ambient") {
+      if (token) await showAmbient(wrapped);
+      else finish();
+    } else {
+      await showOverlay(wrapped);
+    }
   } catch (err) {
     playing = false;
     console.error(`${MODULE_ID} | overlay failed`, err);
@@ -174,6 +185,11 @@ function blipPitch(config) {
   return Number(game.settings.get(MODULE_ID, "blipPitch")) || 980;
 }
 
+function ambientSize(config) {
+  if (Number.isFinite(config.ambientSize) && config.ambientSize > 0) return Number(config.ambientSize);
+  return Number(game.settings.get(MODULE_ID, "ambientSize")) || 28;
+}
+
 export async function play({
   source = null,
   config = {},
@@ -217,7 +233,9 @@ export async function play({
     hop: merged.hop !== false,
     typingMs: typingSpeed(merged),
     blipPitch: blipPitch(merged),
-    theme: resolveTheme(merged.theme)
+    theme: resolveTheme(merged.theme),
+    display: merged.display === "ambient" ? "ambient" : "box",
+    ambientSize: ambientSize(merged)
   };
 
   broadcastPlay(audienceIds, payload);
@@ -281,7 +299,9 @@ export async function playFromDocument(doc, { triggeringToken = null, extra = {}
       playerTokensOnly: doc.system.playerTokensOnly,
       typingMs: doc.system.typingMs,
       blipPitch: doc.system.blipPitch,
-      theme: doc.system.theme
+      theme: doc.system.theme,
+      display: doc.system.display,
+      ambientSize: doc.system.ambientSize
     };
   } else {
     config = getConfig(doc);

@@ -1,4 +1,4 @@
-import { AUDIENCE, REGION_TYPE, THEMES, isAuthority } from "./constants.js";
+import { AUDIENCE, DISPLAY, REGION_TYPE, THEMES, isAuthority } from "./constants.js";
 import { play } from "./play.js";
 
 const { RegionBehaviorType } = foundry.data.regionBehaviors;
@@ -54,6 +54,22 @@ export class DialogueRegionBehaviorType extends RegionBehaviorType {
         required: true,
         initial: "classic",
         choices: THEMES
+      }),
+      display: new fields.StringField({
+        required: true,
+        initial: DISPLAY.box,
+        choices: {
+          box: "DIALOGUER.DisplayBox",
+          ambient: "DIALOGUER.DisplayAmbient"
+        }
+      }),
+      ambientSize: new fields.NumberField({
+        required: false,
+        nullable: true,
+        integer: true,
+        min: 12,
+        max: 72,
+        initial: null
       })
     };
   }
@@ -80,7 +96,9 @@ export class DialogueRegionBehaviorType extends RegionBehaviorType {
         playerTokensOnly: this.playerTokensOnly,
         typingMs: this.typingMs,
         blipPitch: this.blipPitch,
-        theme: this.theme
+        theme: this.theme,
+        display: this.display,
+        ambientSize: this.ambientSize
       },
       triggeringToken: token,
       scene: this.scene
