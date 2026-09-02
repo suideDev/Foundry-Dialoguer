@@ -68,7 +68,7 @@ function registerSettings() {
     scope: "world",
     config: true,
     type: Number,
-    range: { min: 0, max: 20000, step: 50 },
+    range: { min: 0, max: 20000, step: 1 },
     default: 0
   });
 
