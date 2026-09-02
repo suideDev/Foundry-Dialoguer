@@ -40,7 +40,13 @@
     "HopMs": "Hop speed (ms)",
     "HopMsHint": "Time for one bounce. Lower is faster. Blank uses the world default. 160 is the original speed.",
     "HopDurationMs": "Hop duration (ms)",
-    "HopDurationMsHint": "How long the token bounces. Blank uses the world default. 0 hops for the whole line.",
+    "HopDurationMsHint": "How long the hop and slide last. Blank uses the world default. 0 lasts for the whole line.",
+    "Slide": "Slide the speaker token left and right",
+    "SlideHint": "A small side-to-side sway while it talks. Uses the same duration as hop.",
+    "SlidePx": "Slide amount (pixels)",
+    "SlidePxHint": "How far it sways. Blank uses the world default.",
+    "SlideMs": "Slide speed (ms)",
+    "SlideMsHint": "Time for one left-right cycle. Lower is faster. Blank uses the world default.",
     "PlayerTokensOnly": "Only player-owned tokens can trigger",
     "PlayerTokensOnlyHint": "Uncheck this to test by dragging any token as GM. If a player exists in the world, the token must be assigned to them.",
     "TypingMs": "Typing speed (ms per character)",
@@ -73,7 +79,10 @@
       "HopMs": "Default hop speed (ms)",
       "HopMsHint": "Time for one bounce. Lower is faster. Used when a tile leaves hop speed blank. 160 is the original speed.",
       "HopDurationMs": "Default hop duration (ms)",
-      "HopDurationMsHint": "How long the token bounces. 0 hops for the whole line.",
+      "HopDurationMsHint": "How long the hop and slide last. 0 lasts for the whole line.",
+      "SlidePx": "Default slide amount (pixels)",
+      "SlideMs": "Default slide speed (ms)",
+      "SlideMsHint": "Time for one left-right cycle. Lower is faster.",
       "AmbientSize": "Default ambient text size",
       "AmbientSizeHint": "Used when a tile leaves ambient size blank.",
       "Blip": "Typing blip",
@@ -119,7 +128,18 @@
         },
         "hopDurationMs": {
           "label": "Hop duration (ms)",
-          "hint": "How long the token bounces. Blank uses the world default. 0 hops for the whole line."
+          "hint": "How long the hop and slide last. Blank uses the world default. 0 lasts for the whole line."
+        },
+        "slide": {
+          "label": "Slide speaker token"
+        },
+        "slidePx": {
+          "label": "Slide amount (pixels)",
+          "hint": "How far it sways. Blank uses the world default."
+        },
+        "slideMs": {
+          "label": "Slide speed (ms)",
+          "hint": "Time for one left-right cycle. Lower is faster. Blank uses the world default."
         },
         "playerTokensOnly": {
           "label": "Player tokens only"

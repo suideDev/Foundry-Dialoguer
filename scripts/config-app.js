@@ -95,7 +95,10 @@ export class DialogueConfigApp extends HandlebarsApplicationMixin(ApplicationV2)
       display: data.display || "box",
       ambientSize: optionalNumber(data.ambientSize),
       hopMs: optionalNumber(data.hopMs),
-      hopDurationMs: optionalNumber(data.hopDurationMs)
+      hopDurationMs: optionalNumber(data.hopDurationMs),
+      slide: Boolean(data.slide),
+      slidePx: optionalNumber(data.slidePx),
+      slideMs: optionalNumber(data.slideMs)
     }, { inplace: false });
     if (!app.isTile) {
       config.enabled = true;
@@ -182,7 +185,10 @@ export class DialogueConfigApp extends HandlebarsApplicationMixin(ApplicationV2)
       display: data.display || "box",
       ambientSize: optionalNumber(data.ambientSize),
       hopMs: optionalNumber(data.hopMs),
-      hopDurationMs: optionalNumber(data.hopDurationMs)
+      hopDurationMs: optionalNumber(data.hopDurationMs),
+      slide: Boolean(data.slide),
+      slidePx: optionalNumber(data.slidePx),
+      slideMs: optionalNumber(data.slideMs)
     };
   }
 

@@ -103,6 +103,30 @@
     <p class="hint">{{localize "DIALOGUER.HopDurationMsHint"}}</p>
   </div>
 
+  <div class="form-group">
+    <label>{{localize "DIALOGUER.Slide"}}</label>
+    <div class="form-fields">
+      <input type="checkbox" name="slide" {{checked config.slide}} />
+    </div>
+    <p class="hint">{{localize "DIALOGUER.SlideHint"}}</p>
+  </div>
+
+  <div class="form-group">
+    <label>{{localize "DIALOGUER.SlidePx"}}</label>
+    <div class="form-fields">
+      <input type="number" name="slidePx" value="{{config.slidePx}}" min="0" max="64" step="1" placeholder="8" />
+    </div>
+    <p class="hint">{{localize "DIALOGUER.SlidePxHint"}}</p>
+  </div>
+
+  <div class="form-group">
+    <label>{{localize "DIALOGUER.SlideMs"}}</label>
+    <div class="form-fields">
+      <input type="number" name="slideMs" value="{{config.slideMs}}" min="40" max="1200" step="10" placeholder="320" />
+    </div>
+    <p class="hint">{{localize "DIALOGUER.SlideMsHint"}}</p>
+  </div>
+
   {{#if showPlayerTokensOnly}}
   <div class="form-group">
     <label>{{localize "DIALOGUER.PlayerTokensOnly"}}</label>

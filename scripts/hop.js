@@ -6,11 +6,12 @@ function tickerPriority() {
   return globalThis.PIXI?.UPDATE_PRIORITY?.LOW ?? -25;
 }
 
-function applyOffset(token, offset) {
+function applyOffset(token, bounce, sway) {
   if (typeof token._refreshPosition === "function") token._refreshPosition();
   const mesh = token.mesh;
   if (!mesh) return;
-  mesh.position.y -= offset;
+  if (bounce) mesh.position.y -= bounce;
+  if (sway) mesh.position.x += sway;
 }
 
 export function startHop(tokenId, options = {}) {
@@ -18,8 +19,16 @@ export function startHop(tokenId, options = {}) {
   const token = canvas.tokens?.get(tokenId);
   if (!token) return;
 
-  const height = Number(game.settings.get(MODULE_ID, "hopHeight")) || 16;
+  const hopOn = options.hop !== false;
+  const slideOn = options.slide === true;
+  if (!hopOn && !slideOn) return;
+
+  const height = hopOn ? Number(game.settings.get(MODULE_ID, "hopHeight")) || 16 : 0;
   const period = Math.max(40, Number(options.periodMs) || Number(game.settings.get(MODULE_ID, "hopMs")) || 160);
+  const slide = slideOn
+    ? Math.max(0, Number(options.slidePx) || Number(game.settings.get(MODULE_ID, "slidePx")) || 8)
+    : 0;
+  const slidePeriod = Math.max(40, Number(options.slideMs) || Number(game.settings.get(MODULE_ID, "slideMs")) || 320);
   const duration = Number(options.durationMs);
   const started = performance.now();
 
@@ -29,12 +38,14 @@ export function startHop(tokenId, options = {}) {
       stopHop(tokenId);
       return;
     }
-    if (duration > 0 && performance.now() - started >= duration) {
+    const elapsed = performance.now() - started;
+    if (duration > 0 && elapsed >= duration) {
       stopHop(tokenId);
       return;
     }
-    const bounce = Math.abs(Math.sin(((performance.now() - started) / period) * Math.PI)) * height;
-    applyOffset(current, bounce);
+    const bounce = height ? Math.abs(Math.sin((elapsed / period) * Math.PI)) * height : 0;
+    const sway = slide ? Math.sin((elapsed / slidePeriod) * Math.PI * 2) * slide : 0;
+    applyOffset(current, bounce, sway);
   };
 
   canvas.app.ticker.add(tick, null, tickerPriority());

@@ -26,7 +26,10 @@ export const DEFAULT_CONFIG = {
   display: "box",
   ambientSize: null,
   hopMs: null,
-  hopDurationMs: null
+  hopDurationMs: null,
+  slide: false,
+  slidePx: null,
+  slideMs: null
 };
 
 export const DISPLAY = {

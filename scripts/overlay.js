@@ -68,7 +68,7 @@ export class DialogueOverlay {
     this.closed = true;
     this.skip = true;
     this.typing = false;
-    if (this.payload.hop && this.payload.speakerTokenId) stopHop(this.payload.speakerTokenId);
+    if ((this.payload.hop || this.payload.slide) && this.payload.speakerTokenId) stopHop(this.payload.speakerTokenId);
     window.removeEventListener("keydown", this._onKey, true);
     this.root?.remove();
     this.root = null;
@@ -142,10 +142,14 @@ export class DialogueOverlay {
     this.skip = false;
     this.typing = true;
 
-    if (this.payload.hop && this.payload.speakerTokenId) {
+    if ((this.payload.hop || this.payload.slide) && this.payload.speakerTokenId) {
       startHop(this.payload.speakerTokenId, {
+        hop: this.payload.hop,
         periodMs: this.payload.hopMs,
-        durationMs: this.payload.hopDurationMs
+        durationMs: this.payload.hopDurationMs,
+        slide: this.payload.slide,
+        slidePx: this.payload.slidePx,
+        slideMs: this.payload.slideMs
       });
     }
 

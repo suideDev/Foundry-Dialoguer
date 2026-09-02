@@ -86,6 +86,23 @@ export class DialogueRegionBehaviorType extends RegionBehaviorType {
         min: 0,
         max: 20000,
         initial: null
+      }),
+      slide: new fields.BooleanField({ initial: false }),
+      slidePx: new fields.NumberField({
+        required: false,
+        nullable: true,
+        integer: true,
+        min: 0,
+        max: 64,
+        initial: null
+      }),
+      slideMs: new fields.NumberField({
+        required: false,
+        nullable: true,
+        integer: true,
+        min: 40,
+        max: 1200,
+        initial: null
       })
     };
   }
@@ -116,7 +133,10 @@ export class DialogueRegionBehaviorType extends RegionBehaviorType {
         display: this.display,
         ambientSize: this.ambientSize,
         hopMs: this.hopMs,
-        hopDurationMs: this.hopDurationMs
+        hopDurationMs: this.hopDurationMs,
+        slide: this.slide,
+        slidePx: this.slidePx,
+        slideMs: this.slideMs
       },
       triggeringToken: token,
       scene: this.scene

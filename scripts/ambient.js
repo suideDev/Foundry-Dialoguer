@@ -58,10 +58,14 @@ class AmbientBark {
     this.#mount();
     window.addEventListener("keydown", this._onKey, true);
     canvas.app?.ticker?.add(this._tick, null, (globalThis.PIXI?.UPDATE_PRIORITY?.LOW ?? -25) - 1);
-    if (this.payload.hop !== false && this.payload.speakerTokenId) {
+    if ((this.payload.hop || this.payload.slide) && this.payload.speakerTokenId) {
       startHop(this.payload.speakerTokenId, {
+        hop: this.payload.hop !== false,
         periodMs: this.payload.hopMs,
-        durationMs: this.payload.hopDurationMs
+        durationMs: this.payload.hopDurationMs,
+        slide: this.payload.slide,
+        slidePx: this.payload.slidePx,
+        slideMs: this.payload.slideMs
       });
     }
     this.#tick();
@@ -84,7 +88,7 @@ class AmbientBark {
     if (this.closed) return;
     this.closed = true;
     this.skip = true;
-    if (this.payload.hop !== false && this.payload.speakerTokenId) stopHop(this.payload.speakerTokenId);
+    if ((this.payload.hop || this.payload.slide) && this.payload.speakerTokenId) stopHop(this.payload.speakerTokenId);
     window.removeEventListener("keydown", this._onKey, true);
     canvas.app?.ticker?.remove(this._tick);
     const finish = () => {

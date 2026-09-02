@@ -109,7 +109,7 @@ World setting **GM always sees dialogue** adds you even when audience is set to 
 - Text box theme on each tile, actor, or region
 - Ambient mode floats the line over the speaker instead of opening the box
 
-Hop is visual only. It does not move the token document.
+Hop and slide are visual only. They do not move the token document.
 
 ## Settings
 
@@ -117,6 +117,7 @@ Hop is visual only. It does not move the token document.
 - Hop height
 - Default hop speed
 - Default hop duration
+- Default slide amount and speed
 - Default ambient text size
 - Typing blip on/off, volume, and default pitch (client)
 - GM always sees dialogue

@@ -72,6 +72,25 @@ function registerSettings() {
     default: 0
   });
 
+  game.settings.register(MODULE_ID, "slidePx", {
+    name: "DIALOGUER.Settings.SlidePx",
+    scope: "world",
+    config: true,
+    type: Number,
+    range: { min: 0, max: 64, step: 1 },
+    default: 8
+  });
+
+  game.settings.register(MODULE_ID, "slideMs", {
+    name: "DIALOGUER.Settings.SlideMs",
+    hint: "DIALOGUER.Settings.SlideMsHint",
+    scope: "world",
+    config: true,
+    type: Number,
+    range: { min: 40, max: 1200, step: 10 },
+    default: 320
+  });
+
   game.settings.register(MODULE_ID, "ambientSize", {
     name: "DIALOGUER.Settings.AmbientSize",
     hint: "DIALOGUER.Settings.AmbientSizeHint",

@@ -202,6 +202,16 @@ function hopDuration(config) {
   return Number.isFinite(world) && world > 0 ? world : 0;
 }
 
+function slideAmount(config) {
+  if (Number.isFinite(config.slidePx) && config.slidePx >= 0) return Number(config.slidePx);
+  return Number(game.settings.get(MODULE_ID, "slidePx")) || 8;
+}
+
+function slidePeriod(config) {
+  if (Number.isFinite(config.slideMs) && config.slideMs > 0) return Number(config.slideMs);
+  return Number(game.settings.get(MODULE_ID, "slideMs")) || 320;
+}
+
 export async function play({
   source = null,
   config = {},
@@ -243,13 +253,16 @@ export async function play({
     portrait: portraitFor(speakerDoc, merged.portrait),
     lines: parsed,
     hop: merged.hop !== false,
+    slide: merged.slide === true,
     typingMs: typingSpeed(merged),
     blipPitch: blipPitch(merged),
     theme: resolveTheme(merged.theme),
     display: merged.display === "ambient" ? "ambient" : "box",
     ambientSize: ambientSize(merged),
     hopMs: hopPeriod(merged),
-    hopDurationMs: hopDuration(merged)
+    hopDurationMs: hopDuration(merged),
+    slidePx: slideAmount(merged),
+    slideMs: slidePeriod(merged)
   };
 
   broadcastPlay(audienceIds, payload);
@@ -317,7 +330,10 @@ export async function playFromDocument(doc, { triggeringToken = null, extra = {}
       display: doc.system.display,
       ambientSize: doc.system.ambientSize,
       hopMs: doc.system.hopMs,
-      hopDurationMs: doc.system.hopDurationMs
+      hopDurationMs: doc.system.hopDurationMs,
+      slide: doc.system.slide,
+      slidePx: doc.system.slidePx,
+      slideMs: doc.system.slideMs
     };
   } else {
     config = getConfig(doc);
