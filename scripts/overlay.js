@@ -32,6 +32,10 @@ function blip(hz) {
   }
 }
 
+export function previewBlip(hz) {
+  blip(hz);
+}
+
 function defaultTypingMs() {
   return Number(game.settings.get(MODULE_ID, "typingMs")) || 0;
 }

@@ -77,10 +77,13 @@
     <p class="hint">{{localize "DIALOGUER.TypingMsHint"}}</p>
   </div>
 
-  <div class="form-group">
+  <div class="form-group stacked">
     <label>{{localize "DIALOGUER.BlipPitch"}}</label>
-    <div class="form-fields">
-      <input type="number" name="blipPitch" value="{{config.blipPitch}}" min="50" max="2000" step="10" />
+    <div class="form-fields dialoguer-pitch">
+      <span class="dialoguer-pitch-end">{{localize "DIALOGUER.BlipPitchLow"}}</span>
+      <input type="range" min="50" max="2000" step="10" value="{{blipPitchSlider}}" data-blip-pitch-slider />
+      <span class="dialoguer-pitch-end">{{localize "DIALOGUER.BlipPitchHigh"}}</span>
+      <input type="number" name="blipPitch" value="{{config.blipPitch}}" min="50" max="2000" step="10" placeholder="980" />
     </div>
     <p class="hint">{{localize "DIALOGUER.BlipPitchHint"}}</p>
   </div>

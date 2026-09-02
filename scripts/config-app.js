@@ -1,5 +1,6 @@
 import { AUDIENCE, DEFAULT_CONFIG, MODULE_ID, audienceChoices, getConfig, setConfig } from "./constants.js";
 import { clearFired, play } from "./play.js";
+import { previewBlip } from "./overlay.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -48,12 +49,14 @@ export class DialogueConfigApp extends HandlebarsApplicationMixin(ApplicationV2)
     if (this.isActor && !config.script) {
       config.audience = config.audience || AUDIENCE.gmAndTriggering;
     }
+    const pitch = Number(config.blipPitch);
     return {
       config,
       showEnabled: this.isTile,
       showSpeaker: this.isTile,
       showPlayerTokensOnly: this.isTile,
-      audiences: audienceChoices()
+      audiences: audienceChoices(),
+      blipPitchSlider: Number.isFinite(pitch) && pitch > 0 ? pitch : 980
     };
   }
 
@@ -69,6 +72,7 @@ export class DialogueConfigApp extends HandlebarsApplicationMixin(ApplicationV2)
     const drop = this.element.querySelector("[data-drop='speaker']");
     drop?.addEventListener("dragover", (event) => event.preventDefault());
     drop?.addEventListener("drop", (event) => this.#onDropSpeaker(event));
+    this.#bindPitchControls();
   }
 
   static async #onSubmit(_event, _form, formData) {
@@ -168,6 +172,28 @@ export class DialogueConfigApp extends HandlebarsApplicationMixin(ApplicationV2)
       typingMs: optionalNumber(data.typingMs),
       blipPitch: optionalNumber(data.blipPitch)
     };
+  }
+
+  #bindPitchControls() {
+    const slider = this.element.querySelector("[data-blip-pitch-slider]");
+    const number = this.element.querySelector('input[name="blipPitch"]');
+    if (!slider || !number || slider.dataset.bound) return;
+    slider.dataset.bound = "1";
+    let lastPreview = 0;
+    const preview = (hz) => {
+      const now = performance.now();
+      if (now - lastPreview < 70) return;
+      lastPreview = now;
+      previewBlip(hz);
+    };
+    slider.addEventListener("input", () => {
+      number.value = slider.value;
+      preview(Number(slider.value));
+    });
+    number.addEventListener("input", () => {
+      const hz = optionalNumber(number.value);
+      slider.value = String(hz && hz > 0 ? hz : 980);
+    });
   }
 
   #onDropSpeaker(event) {

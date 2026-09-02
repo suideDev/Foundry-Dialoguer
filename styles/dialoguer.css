@@ -136,6 +136,31 @@
   flex: 1 1 100%;
 }
 
+.dialoguer-config .dialoguer-pitch {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  flex-wrap: nowrap;
+}
+
+.dialoguer-config .dialoguer-pitch input[type="range"] {
+  flex: 1 1 auto;
+  min-width: 8rem;
+}
+
+.dialoguer-config .dialoguer-pitch input[type="number"] {
+  flex: 0 0 4.6rem;
+  width: 4.6rem;
+}
+
+.dialoguer-config .dialoguer-pitch-end {
+  flex: 0 0 auto;
+  font-size: 0.85em;
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
 .dialoguer-config .dialoguer-row {
   display: flex;
   gap: 0.4rem;

@@ -24,7 +24,9 @@
     "TypingMs": "Typing speed (ms per character)",
     "TypingMsHint": "Blank uses the world default. 0 is instant.",
     "BlipPitch": "Talking pitch (Hz)",
-    "BlipPitchHint": "Frequency in Hertz. The default beep is 980. 60 is a deep rumble. Blank uses the client default.",
+    "BlipPitchHint": "Low 50 is a rumble. High 2000 is a squeak. 980 is the default beep. Blank uses the client default.",
+    "BlipPitchLow": "Low",
+    "BlipPitchHigh": "High",
     "ResetHistory": "Clear once-per-token history",
     "Test": "Test (GM only)",
     "Save": "Save",
@@ -92,7 +94,7 @@
         },
         "blipPitch": {
           "label": "Talking pitch (Hz)",
-          "hint": "Frequency in Hertz. The default beep is 980. 60 is a deep rumble. Blank uses the client default."
+          "hint": "Low 50 is a rumble. High 2000 is a squeak. 980 is the default beep. Blank uses the client default."
         }
       }
     }
