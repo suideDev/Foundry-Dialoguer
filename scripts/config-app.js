@@ -6,14 +6,14 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 export class DialogueConfigApp extends HandlebarsApplicationMixin(ApplicationV2) {
   static DEFAULT_OPTIONS = {
     id: "dialoguer-config",
-    classes: ["dialoguer-config"],
+    classes: ["dialoguer-config", "standard-form"],
     tag: "form",
     window: {
       title: "DIALOGUER.ConfigTitle",
       icon: "fa-solid fa-comment-dots",
       resizable: true
     },
-    position: { width: 560, height: "auto" },
+    position: { width: 580, height: "auto" },
     form: {
       handler: DialogueConfigApp.#onSubmit,
       closeOnSubmit: true

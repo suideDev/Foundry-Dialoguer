@@ -101,6 +101,7 @@ export class DialogueOverlay {
     document.body.appendChild(root);
     this.root = root;
     this.portraitEl = root.querySelector(".dialoguer-portrait");
+    this.portraitWrap = root.querySelector(".dialoguer-portrait-wrap");
     this.nameEl = root.querySelector(".dialoguer-name");
     this.textEl = root.querySelector(".dialoguer-text");
     this.advanceEl = root.querySelector(".dialoguer-advance");
@@ -114,9 +115,11 @@ export class DialogueOverlay {
     if (portrait) {
       this.portraitEl.src = portrait;
       this.portraitEl.style.display = "";
+      this.portraitWrap.classList.remove("is-empty");
     } else {
       this.portraitEl.removeAttribute("src");
       this.portraitEl.style.display = "none";
+      this.portraitWrap.classList.add("is-empty");
     }
     this.nameEl.textContent = this.payload.speakerName ? `* ${this.payload.speakerName}` : "";
     this.advanceEl.classList.remove("is-ready");

@@ -50,24 +50,28 @@ export function parseLines(script) {
 }
 
 export function isPlayerOwnedToken(tokenDoc) {
-  const actor = tokenDoc.actor;
-  if (!actor) return false;
-  return game.users.some((user) => !user.isGM && actor.testUserPermission(user, "OWNER"));
+  if (!tokenDoc) return false;
+  if (tokenDoc.hasPlayerOwner || tokenDoc.actor?.hasPlayerOwner) return true;
+  const players = game.users.filter((user) => !user.isGM);
+  if (!players.length) return true;
+  return false;
+}
+
+export function tokenCenter(tokenDoc, point = null) {
+  const size = tokenDoc.parent?.grid?.size ?? 100;
+  const x = point?.x ?? tokenDoc.x;
+  const y = point?.y ?? tokenDoc.y;
+  const width = point?.width ?? tokenDoc.width;
+  const height = point?.height ?? tokenDoc.height;
+  return {
+    x: x + (width * size) / 2,
+    y: y + (height * size) / 2
+  };
 }
 
 export function isAuthority() {
   const gm = game.users.activeGM;
   return gm ? gm.id === game.user.id : game.user.isGM;
-}
-
-export function tokenCenter(tokenDoc) {
-  const object = tokenDoc.object;
-  if (object?.center) return object.center;
-  const size = tokenDoc.parent?.grid?.size ?? 100;
-  return {
-    x: tokenDoc.x + (tokenDoc.width * size) / 2,
-    y: tokenDoc.y + (tokenDoc.height * size) / 2
-  };
 }
 
 export function pointInTile(point, tileDoc) {

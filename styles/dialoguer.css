@@ -1,12 +1,12 @@
 .dialoguer-overlay {
   position: fixed;
   inset: 0;
-  z-index: 10000;
+  z-index: 99999;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  padding: 0 6vw 4.5vh;
+  padding: 0 8vw 96px;
   background: linear-gradient(
     to top,
     rgba(0, 0, 0, 0.58) 0%,
@@ -22,8 +22,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-end;
   width: min(920px, 86vw);
-  gap: 0.6rem;
+  gap: 12px;
 }
 
 .dialoguer-portrait-wrap {
@@ -31,8 +32,11 @@
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  min-height: 28vh;
   pointer-events: none;
+}
+
+.dialoguer-portrait-wrap.is-empty {
+  display: none;
 }
 
 .dialoguer-portrait {
@@ -104,16 +108,22 @@
   50% { opacity: 0; }
 }
 
-.dialoguer-config .form-group textarea {
+.dialoguer-config textarea[name="script"] {
+  width: 100%;
   min-height: 10rem;
   font-family: ui-monospace, "Courier New", monospace;
   resize: vertical;
+}
+
+.dialoguer-config .form-group.stacked .form-fields {
+  flex: 1 1 100%;
 }
 
 .dialoguer-config .dialoguer-row {
   display: flex;
   gap: 0.4rem;
   align-items: center;
+  width: 100%;
 }
 
 .dialoguer-config .dialoguer-row input[type="text"] {
@@ -125,7 +135,7 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   justify-content: flex-end;
-  margin-top: 0.75rem;
+  margin-top: 0.5rem;
 }
 
 .dialoguer-hud-btn i {

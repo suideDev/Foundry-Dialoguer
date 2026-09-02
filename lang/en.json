@@ -20,6 +20,7 @@
     "Once": "Once per token",
     "Hop": "Hop the speaker token while text types",
     "PlayerTokensOnly": "Only player-owned tokens can trigger",
+    "PlayerTokensOnlyHint": "Uncheck this to test by dragging any token as GM. If a player exists in the world, the token must be assigned to them.",
     "TypingMs": "Typing speed (ms per character)",
     "TypingMsHint": "Blank uses the world default. 0 is instant.",
     "ResetHistory": "Clear once-per-token history",
