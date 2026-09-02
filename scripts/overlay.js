@@ -1,4 +1,4 @@
-import { MODULE_ID } from "./constants.js";
+import { MODULE_ID, resolveTheme } from "./constants.js";
 import { startHop, stopHop } from "./hop.js";
 
 let current = null;
@@ -92,8 +92,10 @@ export class DialogueOverlay {
 
   #mount() {
     const root = document.createElement("div");
+    const theme = resolveTheme(this.payload.theme);
     root.id = "dialoguer-overlay";
-    root.className = "dialoguer-overlay";
+    root.dataset.theme = theme;
+    root.className = `dialoguer-overlay theme-${theme}`;
     root.innerHTML = `
       <div class="dialoguer-stage">
         <div class="dialoguer-portrait-wrap">
@@ -129,7 +131,10 @@ export class DialogueOverlay {
       this.portraitEl.style.display = "none";
       this.portraitWrap.classList.add("is-empty");
     }
-    this.nameEl.textContent = this.payload.speakerName ? `* ${this.payload.speakerName}` : "";
+    const name = this.payload.speakerName ?? "";
+    const theme = resolveTheme(this.payload.theme);
+    const star = theme === "classic" || theme === "terminal";
+    this.nameEl.textContent = name ? (star ? `* ${name}` : name) : "";
     this.advanceEl.classList.remove("is-ready");
     this.full = line.text ?? "";
     this.shown = "";

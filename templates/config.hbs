@@ -46,6 +46,16 @@
   </div>
 
   <div class="form-group">
+    <label>{{localize "DIALOGUER.Theme"}}</label>
+    <div class="form-fields">
+      <select name="theme">
+        {{selectOptions themes selected=config.theme localize=true}}
+      </select>
+    </div>
+    <p class="hint">{{localize "DIALOGUER.ThemeHint"}}</p>
+  </div>
+
+  <div class="form-group">
     <label>{{localize "DIALOGUER.Once"}}</label>
     <div class="form-fields">
       <input type="checkbox" name="once" {{checked config.once}} />

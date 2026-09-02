@@ -17,6 +17,14 @@
     "AudienceGmAndTriggering": "GM and triggering player",
     "AudienceScene": "Everyone viewing this scene",
     "AudienceAll": "Everyone connected",
+    "Theme": "Text box",
+    "ThemeHint": "Look of the dialogue box. Use Test to preview.",
+    "ThemeClassic": "Classic",
+    "ThemeParchment": "Parchment",
+    "ThemeArcane": "Arcane",
+    "ThemeStone": "Stone",
+    "ThemeWhisper": "Whisper",
+    "ThemeTerminal": "Terminal",
     "Once": "Once per token",
     "Hop": "Hop the speaker token while text types",
     "PlayerTokensOnly": "Only player-owned tokens can trigger",
@@ -95,6 +103,10 @@
         "blipPitch": {
           "label": "Talking pitch (Hz)",
           "hint": "Low 50 is a rumble. High 2000 is a squeak. 980 is the default beep. Blank uses the client default."
+        },
+        "theme": {
+          "label": "Text box",
+          "hint": "Look of the dialogue box."
         }
       }
     }

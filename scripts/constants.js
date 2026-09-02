@@ -21,7 +21,17 @@ export const DEFAULT_CONFIG = {
   hop: true,
   playerTokensOnly: true,
   typingMs: null,
-  blipPitch: null
+  blipPitch: null,
+  theme: "classic"
+};
+
+export const THEMES = {
+  classic: "DIALOGUER.ThemeClassic",
+  parchment: "DIALOGUER.ThemeParchment",
+  arcane: "DIALOGUER.ThemeArcane",
+  stone: "DIALOGUER.ThemeStone",
+  whisper: "DIALOGUER.ThemeWhisper",
+  terminal: "DIALOGUER.ThemeTerminal"
 };
 
 export function audienceChoices() {
@@ -31,6 +41,14 @@ export function audienceChoices() {
     [AUDIENCE.scene]: "DIALOGUER.AudienceScene",
     [AUDIENCE.all]: "DIALOGUER.AudienceAll"
   };
+}
+
+export function themeChoices() {
+  return { ...THEMES };
+}
+
+export function resolveTheme(id) {
+  return THEMES[id] ? id : "classic";
 }
 
 export function getConfig(doc) {

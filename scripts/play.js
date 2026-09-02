@@ -8,7 +8,8 @@ import {
   isAuthority,
   isPlayerOwnedToken,
   parseLines,
-  tokenCenter
+  tokenCenter,
+  resolveTheme
 } from "./constants.js";
 import { showOverlay, getActiveOverlay } from "./overlay.js";
 import { stopAllHops } from "./hop.js";
@@ -215,7 +216,8 @@ export async function play({
     lines: parsed,
     hop: merged.hop !== false,
     typingMs: typingSpeed(merged),
-    blipPitch: blipPitch(merged)
+    blipPitch: blipPitch(merged),
+    theme: resolveTheme(merged.theme)
   };
 
   broadcastPlay(audienceIds, payload);
@@ -278,7 +280,8 @@ export async function playFromDocument(doc, { triggeringToken = null, extra = {}
       hop: doc.system.hop,
       playerTokensOnly: doc.system.playerTokensOnly,
       typingMs: doc.system.typingMs,
-      blipPitch: doc.system.blipPitch
+      blipPitch: doc.system.blipPitch,
+      theme: doc.system.theme
     };
   } else {
     config = getConfig(doc);

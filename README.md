@@ -106,6 +106,7 @@ World setting **GM always sees dialogue** adds you even when audience is set to 
 - Click / Space / Enter / Z / X: skip typing, then next box, then close
 - Escape: close
 - Clicking while it types dumps the rest of the line
+- Text box theme on each tile, actor, or region
 
 Hop is visual only. It does not move the token document.
 
