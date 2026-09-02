@@ -13,37 +13,13 @@ const lastPlaceable = new WeakMap();
 const enabledTilesByScene = new WeakMap();
 
 export function registerTileTriggers() {
-  Hooks.on("preMoveToken", (doc, movement) => {
-    handleMovement(doc, movement, game.user.id);
-  });
-
   Hooks.on("moveToken", (doc, movement, _operation, user) => {
     const userId = typeof user === "string" ? user : user?.id;
-    handleMovement(doc, movement, userId);
-  });
-
-  const priorPositions = new WeakMap();
-  Hooks.on("preUpdateToken", (doc, changes) => {
-    if (!("x" in changes || "y" in changes)) return;
-    priorPositions.set(doc, { x: doc.x, y: doc.y, width: doc.width, height: doc.height });
-  });
-
-  Hooks.on("updateToken", (doc, changes) => {
-    if (!("x" in changes || "y" in changes)) return;
-    const prior = priorPositions.get(doc);
-    priorPositions.delete(doc);
-    const destination = {
-      x: doc._source?.x ?? doc.x,
-      y: doc._source?.y ?? doc.y,
-      width: doc.width,
-      height: doc.height
-    };
-    const origin = prior ?? destination;
-    considerPoints(doc, [origin, destination], game.user.id);
+    handleCompletedMovement(doc, movement, userId);
   });
 
   Hooks.on("refreshToken", (token) => {
-    if (!token?.document?.parent) return;
+    if (!isLiveToken(token)) return;
     const tiles = enabledTiles(token.document.parent);
     if (!tiles.length) return;
     const x = token.x;
@@ -58,7 +34,7 @@ export function registerTileTriggers() {
       width: (token.w || token.document.width * size) / size,
       height: (token.h || token.document.height * size) / size
     };
-    considerPoints(token.document, [point], game.user.id, { emit: false });
+    considerPoints(token.document, [point], game.user.id);
   });
 
   Hooks.on("canvasReady", (canvas) => snapshotScene(canvas.scene));
@@ -76,10 +52,16 @@ export function registerTileTriggers() {
     const scene = game.scenes.get(message.sceneId);
     const token = scene?.tokens.get(message.tokenId);
     if (!token) return;
-    considerPoints(token, message.points ?? [message.origin, message.destination], message.userId, {
-      emit: false
-    });
+    considerPoints(token, message.points ?? [], message.userId, { emit: false });
   });
+}
+
+function isLiveToken(token) {
+  if (!token?.document?.parent) return false;
+  if (token.isPreview || token._original) return false;
+  if (token.isDragged) return false;
+  if (token.previewType === "dragging") return false;
+  return Boolean(token.document.parent.tokens.get(token.document.id));
 }
 
 function enabledTiles(scene) {
@@ -121,28 +103,30 @@ function clearToken(tokenDoc) {
   }
 }
 
-function movementPoints(tokenDoc, movement) {
+function addPoint(points, seen, tokenDoc, raw) {
+  const point = normalizeTokenPoint(tokenDoc, raw);
+  if (!point) return;
+  const key = `${point.x}:${point.y}:${point.width}:${point.height}`;
+  if (seen.has(key)) return;
+  seen.add(key);
+  points.push(point);
+}
+
+function completedPoints(tokenDoc, movement) {
   const points = [];
   const seen = new Set();
-  const add = (raw) => {
-    const point = normalizeTokenPoint(tokenDoc, raw);
-    if (!point) return;
-    const key = `${point.x}:${point.y}:${point.width}:${point.height}`;
-    if (seen.has(key)) return;
-    seen.add(key);
-    points.push(point);
-  };
-
-  add(movement?.origin);
-  for (const waypoint of movement?.passed?.waypoints ?? []) add(waypoint);
-  for (const waypoint of movement?.pending?.waypoints ?? []) add(waypoint);
-  add(movement?.destination);
+  addPoint(points, seen, tokenDoc, movement?.origin);
+  for (const waypoint of movement?.passed?.waypoints ?? []) addPoint(points, seen, tokenDoc, waypoint);
+  if (!(movement?.pending?.waypoints ?? []).length) {
+    addPoint(points, seen, tokenDoc, movement?.destination);
+  }
   return points;
 }
 
-function handleMovement(doc, movement, userId) {
-  const points = movementPoints(doc, movement);
-  if (points.length < 1) return;
+function handleCompletedMovement(doc, movement, userId) {
+  if (movement?.state === "planned") return;
+  const points = completedPoints(doc, movement);
+  if (!points.length) return;
   considerPoints(doc, points, userId);
 }
 
@@ -166,6 +150,22 @@ function considerPoints(tokenDoc, points, userId, { emit = true } = {}) {
   }
   if (!normalized.length) return;
 
+  const enteredTiles = [];
+  for (const tile of tiles) {
+    const key = occupancyKey(tokenDoc.id, tile.id);
+    let inside = occupancy.get(key) ?? false;
+    let entered = false;
+    for (const point of normalized) {
+      const now = tokenOverlapsTile(tokenDoc, point, tile);
+      if (now && !inside) entered = true;
+      inside = now;
+    }
+    occupancy.set(key, inside);
+    if (entered) enteredTiles.push(tile);
+  }
+
+  if (!enteredTiles.length) return;
+
   if (!isAuthority()) {
     if (!emit || userId !== game.user.id) return;
     game.socket.emit(SOCKET_EVENT, {
@@ -178,18 +178,7 @@ function considerPoints(tokenDoc, points, userId, { emit = true } = {}) {
     return;
   }
 
-  for (const tile of tiles) {
-    const key = occupancyKey(tokenDoc.id, tile.id);
-    const here = { x: tokenDoc.x, y: tokenDoc.y, width: tokenDoc.width, height: tokenDoc.height };
-    let inside = occupancy.has(key) ? occupancy.get(key) : tokenOverlapsTile(tokenDoc, here, tile);
-    let entered = false;
-    for (const point of normalized) {
-      const now = tokenOverlapsTile(tokenDoc, point, tile);
-      if (now && !inside) entered = true;
-      inside = now;
-    }
-    occupancy.set(key, inside);
-    if (!entered) continue;
+  for (const tile of enteredTiles) {
     const config = getConfig(tile);
     if (!canTrigger(tokenDoc, config, userId)) continue;
     void playFromDocument(tile, { triggeringToken: tokenDoc });
