@@ -20,7 +20,7 @@ function blip(hz) {
       : Number(game.settings.get(MODULE_ID, "blipPitch")) || 980;
     const jitter = Math.min(220, pitch * 0.18);
     osc.type = "square";
-    osc.frequency.value = Math.max(80, pitch - jitter / 2 + Math.random() * jitter);
+    osc.frequency.value = Math.max(50, pitch - jitter / 2 + Math.random() * jitter);
     gain.gain.setValueAtTime(volume, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
     osc.connect(gain);

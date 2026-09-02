@@ -72,7 +72,7 @@ function registerSettings() {
     scope: "client",
     config: true,
     type: Number,
-    range: { min: 200, max: 2000, step: 20 },
+    range: { min: 50, max: 2000, step: 10 },
     default: 980
   });
 

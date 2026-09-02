@@ -46,7 +46,7 @@ export class DialogueRegionBehaviorType extends RegionBehaviorType {
         required: false,
         nullable: true,
         integer: true,
-        min: 200,
+        min: 50,
         max: 2000,
         initial: null
       })
