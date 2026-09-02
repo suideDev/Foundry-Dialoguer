@@ -1,22 +1,25 @@
-import { SOCKET_EVENT, getConfig, isAuthority, isPlayerOwnedToken, tokenOverlapsTile } from "./constants.js";
+import {
+  SOCKET_EVENT,
+  getConfig,
+  isAuthority,
+  isPlayerOwnedToken,
+  normalizeTokenPoint,
+  tokenOverlapsTile
+} from "./constants.js";
 import { playFromDocument } from "./play.js";
 
-const recent = new Map();
+const occupancy = new Map();
+const lastPlaceable = new WeakMap();
+const enabledTilesByScene = new WeakMap();
 
 export function registerTileTriggers() {
   Hooks.on("preMoveToken", (doc, movement) => {
-    const origin = movement?.origin;
-    const destination = movement?.destination;
-    if (!origin || !destination) return;
-    handleMovement(doc, origin, destination, game.user.id);
+    handleMovement(doc, movement, game.user.id);
   });
 
   Hooks.on("moveToken", (doc, movement, _operation, user) => {
-    const origin = movement?.origin;
-    const destination = movement?.destination;
-    if (!origin || !destination) return;
     const userId = typeof user === "string" ? user : user?.id;
-    handleMovement(doc, origin, destination, userId);
+    handleMovement(doc, movement, userId);
   });
 
   const priorPositions = new WeakMap();
@@ -29,15 +32,43 @@ export function registerTileTriggers() {
     if (!("x" in changes || "y" in changes)) return;
     const prior = priorPositions.get(doc);
     priorPositions.delete(doc);
-    if (!prior) return;
     const destination = {
       x: doc._source?.x ?? doc.x,
       y: doc._source?.y ?? doc.y,
       width: doc.width,
       height: doc.height
     };
-    handleMovement(doc, prior, destination, game.user.id);
+    const origin = prior ?? destination;
+    considerPoints(doc, [origin, destination], game.user.id);
   });
+
+  Hooks.on("refreshToken", (token) => {
+    if (!token?.document?.parent) return;
+    const tiles = enabledTiles(token.document.parent);
+    if (!tiles.length) return;
+    const x = token.x;
+    const y = token.y;
+    const prev = lastPlaceable.get(token);
+    if (prev && prev.x === x && prev.y === y) return;
+    lastPlaceable.set(token, { x, y });
+    const size = token.document.parent?.grid?.size ?? 100;
+    const point = {
+      x,
+      y,
+      width: (token.w || token.document.width * size) / size,
+      height: (token.h || token.document.height * size) / size
+    };
+    considerPoints(token.document, [point], game.user.id, { emit: false });
+  });
+
+  Hooks.on("canvasReady", (canvas) => snapshotScene(canvas.scene));
+  Hooks.on("createToken", (doc) => snapshotToken(doc));
+  Hooks.on("deleteToken", (doc) => clearToken(doc));
+  Hooks.on("createTile", (tile) => invalidateTiles(tile.parent));
+  Hooks.on("updateTile", (tile) => invalidateTiles(tile.parent));
+  Hooks.on("deleteTile", (tile) => invalidateTiles(tile.parent));
+
+  if (canvas?.ready) snapshotScene(canvas.scene);
 
   game.socket.on(SOCKET_EVENT, (message) => {
     if (message?.action !== "tileEnter") return;
@@ -45,24 +76,74 @@ export function registerTileTriggers() {
     const scene = game.scenes.get(message.sceneId);
     const token = scene?.tokens.get(message.tokenId);
     if (!token) return;
-    void considerTileEntry(token, message.origin, message.destination, message.userId);
+    considerPoints(token, message.points ?? [message.origin, message.destination], message.userId, {
+      emit: false
+    });
   });
 }
 
-function handleMovement(doc, origin, destination, userId) {
-  if (isAuthority()) {
-    void considerTileEntry(doc, origin, destination, userId);
-    return;
+function enabledTiles(scene) {
+  if (!scene) return [];
+  let tiles = enabledTilesByScene.get(scene);
+  if (!tiles) {
+    tiles = scene.tiles.filter((tile) => getConfig(tile).enabled);
+    enabledTilesByScene.set(scene, tiles);
   }
-  if (userId !== game.user.id) return;
-  game.socket.emit(SOCKET_EVENT, {
-    action: "tileEnter",
-    sceneId: doc.parent?.id,
-    tokenId: doc.id,
-    origin,
-    destination,
-    userId
-  });
+  return tiles;
+}
+
+function invalidateTiles(scene) {
+  if (scene) enabledTilesByScene.delete(scene);
+}
+
+function occupancyKey(tokenId, tileId) {
+  return `${tokenId}:${tileId}`;
+}
+
+function snapshotScene(scene) {
+  if (!scene) return;
+  for (const token of scene.tokens) snapshotToken(token);
+}
+
+function snapshotToken(tokenDoc) {
+  const scene = tokenDoc?.parent;
+  if (!scene) return;
+  const point = { x: tokenDoc.x, y: tokenDoc.y, width: tokenDoc.width, height: tokenDoc.height };
+  for (const tile of enabledTiles(scene)) {
+    occupancy.set(occupancyKey(tokenDoc.id, tile.id), tokenOverlapsTile(tokenDoc, point, tile));
+  }
+}
+
+function clearToken(tokenDoc) {
+  const prefix = `${tokenDoc.id}:`;
+  for (const key of occupancy.keys()) {
+    if (key.startsWith(prefix)) occupancy.delete(key);
+  }
+}
+
+function movementPoints(tokenDoc, movement) {
+  const points = [];
+  const seen = new Set();
+  const add = (raw) => {
+    const point = normalizeTokenPoint(tokenDoc, raw);
+    if (!point) return;
+    const key = `${point.x}:${point.y}:${point.width}:${point.height}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    points.push(point);
+  };
+
+  add(movement?.origin);
+  for (const waypoint of movement?.passed?.waypoints ?? []) add(waypoint);
+  for (const waypoint of movement?.pending?.waypoints ?? []) add(waypoint);
+  add(movement?.destination);
+  return points;
+}
+
+function handleMovement(doc, movement, userId) {
+  const points = movementPoints(doc, movement);
+  if (points.length < 1) return;
+  considerPoints(doc, points, userId);
 }
 
 function canTrigger(tokenDoc, config, userId) {
@@ -72,22 +153,45 @@ function canTrigger(tokenDoc, config, userId) {
   return Boolean(mover && !mover.isGM);
 }
 
-async function considerTileEntry(tokenDoc, origin, destination, userId) {
+function considerPoints(tokenDoc, points, userId, { emit = true } = {}) {
   const scene = tokenDoc.parent;
   if (!scene) return;
+  const tiles = enabledTiles(scene);
+  if (!tiles.length) return;
 
-  const tiles = scene.tiles.filter((tile) => getConfig(tile).enabled);
+  const normalized = [];
+  for (const raw of points ?? []) {
+    const point = normalizeTokenPoint(tokenDoc, raw);
+    if (point) normalized.push(point);
+  }
+  if (!normalized.length) return;
+
+  if (!isAuthority()) {
+    if (!emit || userId !== game.user.id) return;
+    game.socket.emit(SOCKET_EVENT, {
+      action: "tileEnter",
+      sceneId: scene.id,
+      tokenId: tokenDoc.id,
+      points: normalized,
+      userId
+    });
+    return;
+  }
 
   for (const tile of tiles) {
-    const insideNow = tokenOverlapsTile(tokenDoc, destination, tile);
-    const insideWas = tokenOverlapsTile(tokenDoc, origin, tile);
-    if (!insideNow || insideWas) continue;
+    const key = occupancyKey(tokenDoc.id, tile.id);
+    const here = { x: tokenDoc.x, y: tokenDoc.y, width: tokenDoc.width, height: tokenDoc.height };
+    let inside = occupancy.has(key) ? occupancy.get(key) : tokenOverlapsTile(tokenDoc, here, tile);
+    let entered = false;
+    for (const point of normalized) {
+      const now = tokenOverlapsTile(tokenDoc, point, tile);
+      if (now && !inside) entered = true;
+      inside = now;
+    }
+    occupancy.set(key, inside);
+    if (!entered) continue;
     const config = getConfig(tile);
     if (!canTrigger(tokenDoc, config, userId)) continue;
-    const key = `${tokenDoc.id}:${tile.id}`;
-    const last = recent.get(key) ?? 0;
-    if (Date.now() - last < 2000) continue;
-    recent.set(key, Date.now());
-    await playFromDocument(tile, { triggeringToken: tokenDoc });
+    void playFromDocument(tile, { triggeringToken: tokenDoc });
   }
 }

@@ -74,15 +74,49 @@ export function isAuthority() {
   return gm ? gm.id === game.user.id : game.user.isGM;
 }
 
+export function tilePixelRect(tileDoc) {
+  const bounds = tileDoc.object?.bounds;
+  if (bounds && Number.isFinite(bounds.width) && bounds.width > 0) {
+    return { x: bounds.x, y: bounds.y, w: Math.abs(bounds.width), h: Math.abs(bounds.height) };
+  }
+  return {
+    x: tileDoc.x,
+    y: tileDoc.y,
+    w: Math.abs(tileDoc.width),
+    h: Math.abs(tileDoc.height)
+  };
+}
+
+export function normalizeTokenPoint(tokenDoc, point) {
+  if (!point) return null;
+  const x = Number(point.x);
+  const y = Number(point.y);
+  if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+  const width = Number(point.width);
+  const height = Number(point.height);
+  return {
+    x,
+    y,
+    width: width > 0 ? width : tokenDoc.width,
+    height: height > 0 ? height : tokenDoc.height
+  };
+}
+
 export function tokenOverlapsTile(tokenDoc, point, tileDoc) {
   const size = tokenDoc.parent?.grid?.size ?? 100;
-  const width = (point?.width ?? tokenDoc.width) * size;
-  const height = (point?.height ?? tokenDoc.height) * size;
-  const x = point?.x ?? tokenDoc.x;
-  const y = point?.y ?? tokenDoc.y;
-  const x1 = tileDoc.x;
-  const y1 = tileDoc.y;
-  const x2 = x1 + Math.abs(tileDoc.width);
-  const y2 = y1 + Math.abs(tileDoc.height);
-  return x < x2 && x + width > x1 && y < y2 && y + height > y1;
+  const normalized = normalizeTokenPoint(tokenDoc, point) ?? {
+    x: tokenDoc.x,
+    y: tokenDoc.y,
+    width: tokenDoc.width,
+    height: tokenDoc.height
+  };
+  const width = normalized.width * size;
+  const height = normalized.height * size;
+  const tile = tilePixelRect(tileDoc);
+  return (
+    normalized.x < tile.x + tile.w
+    && normalized.x + width > tile.x
+    && normalized.y < tile.y + tile.h
+    && normalized.y + height > tile.y
+  );
 }
