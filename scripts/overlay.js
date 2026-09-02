@@ -45,6 +45,8 @@ export class DialogueOverlay {
     this.payload = payload;
     this.lines = payload.lines ?? [];
     this.index = 0;
+    this.pageIndex = 0;
+    this.pages = [];
     this.shown = "";
     this.full = "";
     this.typing = false;
@@ -85,6 +87,10 @@ export class DialogueOverlay {
       this.skip = true;
       return true;
     }
+    if (this.pageIndex < this.pages.length - 1) {
+      void this.#playPage(this.pageIndex + 1);
+      return true;
+    }
     if (this.index < this.lines.length - 1) {
       void this.#playLine(this.index + 1);
       return true;
@@ -123,6 +129,7 @@ export class DialogueOverlay {
   async #playLine(index) {
     if (this.closed) return;
     this.index = index;
+    this.pageIndex = 0;
     const line = this.lines[index];
     const portrait = line.portrait || this.payload.portrait;
     if (portrait) {
@@ -138,8 +145,19 @@ export class DialogueOverlay {
     const theme = resolveTheme(this.payload.theme);
     const star = theme === "classic" || theme === "terminal";
     this.nameEl.textContent = name ? (star ? `* ${name}` : name) : "";
+    
+    const text = line.text ?? "";
+    this.pages = text.split(/\[page\]/i).map((page) => page.trim()).filter(Boolean);
+    if (!this.pages.length) this.pages = [""];
+    
+    await this.#playPage(0);
+  }
+
+  async #playPage(pageIndex) {
+    if (this.closed) return;
+    this.pageIndex = pageIndex;
     this.advanceEl.classList.remove("is-ready");
-    this.full = line.text ?? "";
+    this.full = this.pages[pageIndex] ?? "";
     this.shown = "";
     this.textEl.textContent = "";
     this.skip = false;
