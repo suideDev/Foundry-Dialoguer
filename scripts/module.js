@@ -66,6 +66,16 @@ function registerSettings() {
     default: 0.04
   });
 
+  game.settings.register(MODULE_ID, "blipPitch", {
+    name: "DIALOGUER.Settings.BlipPitch",
+    hint: "DIALOGUER.Settings.BlipPitchHint",
+    scope: "client",
+    config: true,
+    type: Number,
+    range: { min: 200, max: 2000, step: 20 },
+    default: 980
+  });
+
   game.settings.register(MODULE_ID, "whisperChat", {
     name: "DIALOGUER.Settings.WhisperChat",
     hint: "DIALOGUER.Settings.WhisperChatHint",

@@ -15,8 +15,10 @@ function blip() {
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     const volume = Number(game.settings.get(MODULE_ID, "blipVolume")) || 0.04;
+    const pitch = Number(game.settings.get(MODULE_ID, "blipPitch")) || 980;
+    const jitter = Math.min(220, pitch * 0.18);
     osc.type = "square";
-    osc.frequency.value = 980 + Math.random() * 220;
+    osc.frequency.value = Math.max(80, pitch - jitter / 2 + Math.random() * jitter);
     gain.gain.setValueAtTime(volume, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
     osc.connect(gain);

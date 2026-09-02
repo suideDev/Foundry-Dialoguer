@@ -113,5 +113,5 @@ Hop is visual only. It does not move the token document.
 
 - Default typing speed
 - Hop height
-- Typing blip on/off and volume (client)
+- Typing blip on/off, volume, and pitch (client)
 - GM always sees dialogue

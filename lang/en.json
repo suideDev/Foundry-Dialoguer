@@ -47,6 +47,8 @@
       "Blip": "Typing blip",
       "BlipHint": "Short beep on each character, Undertale-style.",
       "BlipVolume": "Blip volume",
+      "BlipPitch": "Blip pitch",
+      "BlipPitchHint": "How high or low the typing beep sounds. Lower is deeper.",
       "GmAlwaysSees": "GM always sees dialogue",
       "GmAlwaysSeesHint": "Active GMs receive every overlay even if audience is set to triggering player only.",
       "WhisperChat": "Whisper dialogue to chat",
