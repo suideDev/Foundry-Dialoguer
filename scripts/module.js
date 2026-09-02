@@ -52,6 +52,16 @@ function registerSettings() {
     default: 16
   });
 
+  game.settings.register(MODULE_ID, "hopMs", {
+    name: "DIALOGUER.Settings.HopMs",
+    hint: "DIALOGUER.Settings.HopMsHint",
+    scope: "world",
+    config: true,
+    type: Number,
+    range: { min: 40, max: 600, step: 10 },
+    default: 160
+  });
+
   game.settings.register(MODULE_ID, "ambientSize", {
     name: "DIALOGUER.Settings.AmbientSize",
     hint: "DIALOGUER.Settings.AmbientSizeHint",

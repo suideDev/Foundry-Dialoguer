@@ -142,7 +142,7 @@ export class DialogueOverlay {
     this.skip = false;
     this.typing = true;
 
-    if (this.payload.hop && this.payload.speakerTokenId) startHop(this.payload.speakerTokenId);
+    if (this.payload.hop && this.payload.speakerTokenId) startHop(this.payload.speakerTokenId, { periodMs: this.payload.hopMs });
 
     const speed = this.payload.typingMs ?? defaultTypingMs();
     if (speed <= 0) {

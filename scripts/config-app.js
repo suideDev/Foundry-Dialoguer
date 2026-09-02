@@ -93,7 +93,8 @@ export class DialogueConfigApp extends HandlebarsApplicationMixin(ApplicationV2)
       blipPitch: optionalNumber(data.blipPitch),
       theme: data.theme || "classic",
       display: data.display || "box",
-      ambientSize: optionalNumber(data.ambientSize)
+      ambientSize: optionalNumber(data.ambientSize),
+      hopMs: optionalNumber(data.hopMs)
     }, { inplace: false });
     if (!app.isTile) {
       config.enabled = true;
@@ -178,7 +179,8 @@ export class DialogueConfigApp extends HandlebarsApplicationMixin(ApplicationV2)
       blipPitch: optionalNumber(data.blipPitch),
       theme: data.theme || "classic",
       display: data.display || "box",
-      ambientSize: optionalNumber(data.ambientSize)
+      ambientSize: optionalNumber(data.ambientSize),
+      hopMs: optionalNumber(data.hopMs)
     };
   }
 

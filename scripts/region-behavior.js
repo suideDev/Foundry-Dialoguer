@@ -70,6 +70,14 @@ export class DialogueRegionBehaviorType extends RegionBehaviorType {
         min: 12,
         max: 72,
         initial: null
+      }),
+      hopMs: new fields.NumberField({
+        required: false,
+        nullable: true,
+        integer: true,
+        min: 40,
+        max: 600,
+        initial: null
       })
     };
   }
@@ -98,7 +106,8 @@ export class DialogueRegionBehaviorType extends RegionBehaviorType {
         blipPitch: this.blipPitch,
         theme: this.theme,
         display: this.display,
-        ambientSize: this.ambientSize
+        ambientSize: this.ambientSize,
+        hopMs: this.hopMs
       },
       triggeringToken: token,
       scene: this.scene

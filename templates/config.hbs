@@ -87,6 +87,14 @@
     </div>
   </div>
 
+  <div class="form-group">
+    <label>{{localize "DIALOGUER.HopMs"}}</label>
+    <div class="form-fields">
+      <input type="number" name="hopMs" value="{{config.hopMs}}" min="40" max="600" step="10" placeholder="160" />
+    </div>
+    <p class="hint">{{localize "DIALOGUER.HopMsHint"}}</p>
+  </div>
+
   {{#if showPlayerTokensOnly}}
   <div class="form-group">
     <label>{{localize "DIALOGUER.PlayerTokensOnly"}}</label>

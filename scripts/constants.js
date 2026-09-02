@@ -24,7 +24,8 @@ export const DEFAULT_CONFIG = {
   blipPitch: null,
   theme: "classic",
   display: "box",
-  ambientSize: null
+  ambientSize: null,
+  hopMs: null
 };
 
 export const DISPLAY = {

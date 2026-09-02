@@ -190,6 +190,11 @@ function ambientSize(config) {
   return Number(game.settings.get(MODULE_ID, "ambientSize")) || 28;
 }
 
+function hopPeriod(config) {
+  if (Number.isFinite(config.hopMs) && config.hopMs > 0) return Number(config.hopMs);
+  return Number(game.settings.get(MODULE_ID, "hopMs")) || 160;
+}
+
 export async function play({
   source = null,
   config = {},
@@ -235,7 +240,8 @@ export async function play({
     blipPitch: blipPitch(merged),
     theme: resolveTheme(merged.theme),
     display: merged.display === "ambient" ? "ambient" : "box",
-    ambientSize: ambientSize(merged)
+    ambientSize: ambientSize(merged),
+    hopMs: hopPeriod(merged)
   };
 
   broadcastPlay(audienceIds, payload);
@@ -301,7 +307,8 @@ export async function playFromDocument(doc, { triggeringToken = null, extra = {}
       blipPitch: doc.system.blipPitch,
       theme: doc.system.theme,
       display: doc.system.display,
-      ambientSize: doc.system.ambientSize
+      ambientSize: doc.system.ambientSize,
+      hopMs: doc.system.hopMs
     };
   } else {
     config = getConfig(doc);

@@ -13,12 +13,13 @@ function applyOffset(token, offset) {
   mesh.position.y -= offset;
 }
 
-export function startHop(tokenId) {
+export function startHop(tokenId, options = {}) {
   stopHop(tokenId);
   const token = canvas.tokens?.get(tokenId);
   if (!token) return;
 
   const height = Number(game.settings.get(MODULE_ID, "hopHeight")) || 16;
+  const period = Math.max(40, Number(options.periodMs) || Number(game.settings.get(MODULE_ID, "hopMs")) || 160);
   const started = performance.now();
 
   const tick = () => {
@@ -27,7 +28,7 @@ export function startHop(tokenId) {
       stopHop(tokenId);
       return;
     }
-    const bounce = Math.abs(Math.sin(((performance.now() - started) / 160) * Math.PI)) * height;
+    const bounce = Math.abs(Math.sin(((performance.now() - started) / period) * Math.PI)) * height;
     applyOffset(current, bounce);
   };
 

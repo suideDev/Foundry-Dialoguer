@@ -36,7 +36,9 @@
     "AmbientSize": "Ambient text size",
     "AmbientSizeHint": "How large the floating text is. Blank uses the world default.",
     "Once": "Once per token",
-    "Hop": "Hop the speaker token while text types",
+    "Hop": "Hop the speaker token while it talks",
+    "HopMs": "Hop speed (ms)",
+    "HopMsHint": "Time for one bounce. Lower is faster. Blank uses the world default. 160 is the original speed.",
     "PlayerTokensOnly": "Only player-owned tokens can trigger",
     "PlayerTokensOnlyHint": "Uncheck this to test by dragging any token as GM. If a player exists in the world, the token must be assigned to them.",
     "TypingMs": "Typing speed (ms per character)",
@@ -66,6 +68,8 @@
       "TypingMs": "Default typing speed (ms)",
       "TypingMsHint": "Milliseconds between characters. 0 is instant.",
       "HopHeight": "Hop height (pixels)",
+      "HopMs": "Default hop speed (ms)",
+      "HopMsHint": "Time for one bounce. Lower is faster. Used when a tile leaves hop speed blank. 160 is the original speed.",
       "AmbientSize": "Default ambient text size",
       "AmbientSizeHint": "Used when a tile leaves ambient size blank.",
       "Blip": "Typing blip",
@@ -104,6 +108,10 @@
         },
         "hop": {
           "label": "Hop speaker token"
+        },
+        "hopMs": {
+          "label": "Hop speed (ms)",
+          "hint": "Time for one bounce. Lower is faster. Blank uses the world default."
         },
         "playerTokensOnly": {
           "label": "Player tokens only"
