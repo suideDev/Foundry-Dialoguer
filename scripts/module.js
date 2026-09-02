@@ -66,6 +66,15 @@ function registerSettings() {
     default: 0.04
   });
 
+  game.settings.register(MODULE_ID, "whisperChat", {
+    name: "DIALOGUER.Settings.WhisperChat",
+    hint: "DIALOGUER.Settings.WhisperChatHint",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
   game.settings.register(MODULE_ID, "gmAlwaysSees", {
     name: "DIALOGUER.Settings.GmAlwaysSees",
     hint: "DIALOGUER.Settings.GmAlwaysSeesHint",

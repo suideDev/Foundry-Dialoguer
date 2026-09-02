@@ -4,6 +4,13 @@ import { playFromDocument } from "./play.js";
 const recent = new Map();
 
 export function registerTileTriggers() {
+  Hooks.on("preMoveToken", (doc, movement) => {
+    const origin = movement?.origin;
+    const destination = movement?.destination;
+    if (!origin || !destination) return;
+    handleMovement(doc, origin, destination, game.user.id);
+  });
+
   Hooks.on("moveToken", (doc, movement, _operation, user) => {
     const origin = movement?.origin;
     const destination = movement?.destination;
@@ -79,7 +86,7 @@ async function considerTileEntry(tokenDoc, origin, destination, userId) {
     if (!canTrigger(tokenDoc, config, userId)) continue;
     const key = `${tokenDoc.id}:${tile.id}`;
     const last = recent.get(key) ?? 0;
-    if (Date.now() - last < 500) continue;
+    if (Date.now() - last < 2000) continue;
     recent.set(key, Date.now());
     await playFromDocument(tile, { triggeringToken: tokenDoc });
   }

@@ -39,6 +39,7 @@
     },
     "KeyAdvance": "Advance dialogue",
     "KeyClose": "Close dialogue",
+    "ChatFlavor": "Dialogue",
     "Settings": {
       "TypingMs": "Default typing speed (ms)",
       "TypingMsHint": "Milliseconds between characters. 0 is instant.",
@@ -47,7 +48,9 @@
       "BlipHint": "Short beep on each character, Undertale-style.",
       "BlipVolume": "Blip volume",
       "GmAlwaysSees": "GM always sees dialogue",
-      "GmAlwaysSeesHint": "Active GMs receive every overlay even if audience is set to triggering player only."
+      "GmAlwaysSeesHint": "Active GMs receive every overlay even if audience is set to triggering player only.",
+      "WhisperChat": "Whisper dialogue to chat",
+      "WhisperChatHint": "Post the full text as a whisper to the GM and triggering player so they can reread it."
     },
     "MATT": {
       "Group": "Dialoguer",

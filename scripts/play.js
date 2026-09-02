@@ -209,12 +209,43 @@ export async function play({
     typingMs: typingSpeed(merged)
   };
 
-  if (merged.once && source && triggeringToken && isAuthority()) {
-    await markFired(source, triggeringToken.id);
-  }
-
   broadcastPlay(audienceIds, payload);
+  void whisperToChat(payload, audienceIds, speakerDoc);
+  if (merged.once && source && triggeringToken && isAuthority()) {
+    void markFired(source, triggeringToken.id);
+  }
   return true;
+}
+
+function escapeHTML(text) {
+  return String(text ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+async function whisperToChat(payload, userIds, speakerDoc) {
+  if (!game.settings.get(MODULE_ID, "whisperChat")) return;
+  const recipients = [...new Set(userIds)].filter(Boolean);
+  if (!recipients.length) return;
+  const body = payload.lines.map((line) => `<p>${escapeHTML(line.text)}</p>`).join("");
+  const token = speakerDoc?.object ?? canvas.tokens?.get(payload.speakerTokenId);
+  const Chat = foundry.documents?.ChatMessage ?? globalThis.ChatMessage;
+  const data = {
+    content: `<div class="dialoguer-chat">${body}</div>`,
+    speaker: Chat.getSpeaker?.({ token, actor: speakerDoc?.actor }) ?? {
+      alias: payload.speakerName || game.i18n.localize("DIALOGUER.Title")
+    },
+    whisper: recipients,
+    flavor: game.i18n.localize("DIALOGUER.ChatFlavor")
+  };
+  if (CONST.CHAT_MESSAGE_STYLES?.WHISPER != null) data.style = CONST.CHAT_MESSAGE_STYLES.WHISPER;
+  try {
+    await Chat.create(data);
+  } catch (err) {
+    console.error(`${MODULE_ID} | chat whisper failed`, err);
+  }
 }
 
 export function broadcastPlay(userIds, payload) {

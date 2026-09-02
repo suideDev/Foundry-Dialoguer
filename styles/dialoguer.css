@@ -158,3 +158,15 @@
 .dialoguer-hud-btn i {
   color: #f4e6c3;
 }
+
+.dialoguer-chat p {
+  margin: 0.3em 0;
+}
+
+.dialoguer-chat p:first-child {
+  margin-top: 0;
+}
+
+.dialoguer-chat p:last-child {
+  margin-bottom: 0;
+}
